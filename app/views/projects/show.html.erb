@@ -1,0 +1,378 @@
+<% if User.current.allowed_to?(:view_issues, @project) %>
+<% if @trackers.present? %>
+
+
+<% if (276..403).include?(@project.id.to_i) %>
+
+
+
+<div class="tab-container">
+  <div class="tab active" onclick="changeTab(event, 'tab1')">Acces filair</div>
+  <div class="tab" onclick="changeTab(event, 'tab2')">FTTH par DOT</div>
+  <div class="tab" onclick="changeTab(event, 'tab3')">Equipement Actif</div>
+  <div class="tab" onclick="changeTab(event, 'tab6')">Liaisons FO</div>
+  <div class="tab" onclick="changeTab(event, 'tab4')">Batiment</div>
+  <div class="tab" onclick="changeTab(event, 'tab5')">Corporate DOT</div>
+  
+</div>
+
+
+<div id="tab2" class="tab-content">
+
+    <div class="acces-filair">
+          <h4>Recape par DOT <%= link_to 'csv', dot_json_path(@project), class: 'custom-button', target: '_blank' %></h4>
+       
+    </div>
+
+    <div class="etat-realisations">
+      <table class="recap_dot">
+        <%= display_process_dot(@report_par_dot) %>
+     </table>
+    </div>
+   
+</div>
+
+ <div id="tab3" class="tab-content">
+   <h4>Realisation 4G </h4>
+   <div class="etat-realisations">
+     <table class="actif">
+        <%= display_process_actif(@process_data_report,[7,8,9,10,32,42],@project) %>
+     </table>
+   </div>
+</div>
+
+<div id="tab4" class="tab-content">
+
+  <h4>Realisation Batiment</h4>
+     <div class="etat-realisations">
+       <% tracker_ids = @trackers.reject { |tracker| [4,7,6,8,9,10,29,27,30,32,33,47,42,52,53,54,58,59,61,62].include?(tracker.id) }.map(&:id) %>
+          <table class="batiment">
+            <%= display_process_data(@process_data_report,tracker_ids,@project) %>
+          </table>
+     </div>
+
+</div>
+<div id="tab5" class="tab-content">
+    <h4>Actions corporate</h4>
+   <div class="etat-realisations">
+      <table class="odn">
+        <%= display_process_data(@process_data_report,[52,53,54,61],@project) %>
+      </table>
+   </div>
+</div>
+
+<div id="tab6" class="tab-content">
+    <h4>Suivi des réalisations Pose FO</h4>
+   <div class="etat-realisations">
+      <table class="odn">
+        <%= display_process_data(@process_data_report,[6,27,30,33],@project) %>
+      </table>
+   </div>
+</div>
+
+<div id="tab1" class="tab-content  partie_acces" style="display: block;">
+  
+<% unless @project.active? %>
+  <p class="warning"><span class="icon icon-lock"><%= l(:text_project_closed) %></span></p>
+<% end %>
+
+
+<div class="splitcontent" style="margin:auto;width: 100%; ">
+<div class="fullscreen-toggle">
+  <h4 id="graphiques-heading">Tableau de bord</h4>
+</div>
+
+<style>
+  #graphiques-heading {
+   font-weight: bold;
+   padding: 2px;
+  .fullscreen-toggle {
+    cursor: pointer;
+  }
+
+  .fullscreen {
+    position: fixed;
+    text-align:center;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background-color: white;
+  }
+</style>
+
+
+ 
+  
+       <div class="issues box" style="margin:auto;width: 100% ">
+            <div class="total_report">
+               
+               <div class="total_odn_dev">
+
+               <div class="odn-realiations"><p>Bilan Total: ODN Dev (PA & RAR)</p></div>
+                  <div class="pa-dev-container" >
+                       <div class="odn_inscrit" id ="pa_dev_1">
+                         <p>Total inscrit</p>
+                         <p>--</p>
+                      </div>
+                     <div class="odn_en_cours" id ="pa_dev_2">
+                        <p>Total en cours </p>
+                         <p>--</p>
+                     </div>
+                       <div class="odn_realise" id ="pa_dev_3">
+                          <p>Total réalisé</p>
+                          <p>--</p>
+                       </div>
+                </div>
+             
+               </div>
+
+               <div class="total_odn_mod">
+               <div class="odn-realiations"><p>Bilan Total: ODN Mod (PA & RAR)</p></div>
+               <div class="pa-dev-container" >
+                    <div class="odn_inscrit" id ="pa_mod_1">
+                      <p>Total inscrit</p>
+                      <p>--</p>
+                   </div>
+                  <div class="odn_en_cours" id ="pa_mod_2">
+                     <p>Total en cours </p>
+                      <p>--</p>
+                  </div>
+                    <div class="odn_realise" id ="pa_mod_3">
+                       <p>Total réalisé</p>
+                       <p>--</p>
+                    </div>
+             </div>
+
+
+
+               </div>
+               <div class="total_odn">
+               <div class="odn-realiations"><p>Bilan Total: ODN (PA & RAR)</p></div>
+                  <div class="pa-dev-container" >
+                         <div class="odn_inscrit" >
+                             <p>Total inscrit</p>
+                             <p>--</p>
+                         </div>
+                         <div class="odn_en_cours" >
+                            <p>Total en cours </p>
+                            <p>--</p>
+                         </div>
+                         <div class="odn_realise" >
+                            <p>Total réalisé</p>
+                            <p>--</p>
+                         </div>
+                  </div>
+
+               </div>
+            
+               <div class="Raccordements">
+               <div class="odn-realiations"><p>Raccordements clients: réalisations (FTTH-Cuivre)</p></div>
+                  <div class="pa-dev-container" >
+                         <div class="odn_inscrit" >
+                             <p>Capacité Inscrite  </p>
+                             <p><%= link_to display_racc_data(@racc_objectif,@racc_realiser,:objectif_racc),
+                              project_issues_path(@project, :query_id => 1461),style: "font-size: 1.2rem; font-family: sans-serif; color: #088080; margin-left:10px;", target: "_blank"%></p>
+                         </div>
+                         <div class="odn_realise" >
+                            <p>Acces réalisés </p>
+                            <p><%= link_to display_racc_data(@racc_objectif,@racc_realiser,:realiser_racc), 
+                            project_issues_path(@project, :query_id => 1462),style: "font-size: 1.2rem; font-family: sans-serif; color: #088080;margin-left:10px;", target: "_blank"%></p>
+                         </div>
+                         
+                  </div>
+
+               </div>
+
+
+
+            </div>
+              <div class="graphiques">
+
+                
+
+                   <div class="graph-container" id="graph1">
+                      
+                      <div class="left-container">
+                        <div class="graph">
+                          <div id="myChart"></div>
+                        </div>
+                      </div>
+
+                     <div class="text-container">
+                       <div class="text1">
+                         <p>Capacité prevue</p>
+                         <p></p>
+                      </div> 
+         
+                      <div class="text2">
+                         <p>Nbr sites</p>
+                         <p></p>
+                      </div>
+
+                      <div class="text3">
+                        <p>Etudes finalisées</p> 
+                        <p></p> 
+                      </div>
+       
+     </div>
+   </div>
+    <div class="graph-container" id="graph2">
+       <div class="left-container">
+          <div class="graph">
+            <div id="modChart"></div></div>
+       </div>
+
+     <div class="text-container">
+       <div class="text4">
+          <p>Capacité prevue</p>
+          <p></p>
+       </div> 
+       <div class="text5">
+          <p>Nbr sites</p>
+          <p></p>
+       </div>
+
+      <div class="text6">
+         <p>Etudes finalisées</p> 
+         <p></p> 
+     </div>
+
+    </div>
+   </div>
+
+
+  
+   <div class="graph-container-2" id="graph3"> 
+     <div class="odn-realiations"><p>ODN Dev Realisation PA</p></div>
+     <div class="pa-dev-container">
+        <div class="en_cours">
+           <p>Capacité en cours</p>
+             <p>value</p>
+         </div>
+         <div class="realiser">
+           <p>Capacité realisé</p>
+             <p>value</p>
+         </div>
+         <div class="taux">
+            <p>Taux</p>
+            <p>value</p>
+         </div>
+       </div>
+       <div class="odn-realiations"><p>Realisation RAR</p></div>
+       <div class="rar-dev-container">
+         <div class="en_cours_rar">
+             <p>Capacité en cours</p>
+             <p>value</p>
+         </div>
+         <div class="realiser_rar">
+             <p>Capacité réalisée</p>
+             <p>value</p>
+         </div>
+        <div class="taux_rar">
+            <p>Taux</p>
+            <p>value</p>
+         </div>
+    </div>
+  </div>
+
+  <div class="graph-container-2" id="graph4"> 
+  <div class="odn-realiations"><p>ODN Mod Realisation PA</p></div>
+  <div class="pa-mod-container">
+  
+     <div class="en_cours">
+        <p>Capacité en cours</p>
+          <p>value</p>
+      </div>
+      <div class="realiser">
+        <p>Capacité realisé</p>
+          <p>value</p>
+      </div>
+      <div class="taux">
+          <p>Taux</p>
+         <p>value</p>
+      </div>
+    </div>
+    <div class="odn-realiations"><p>Realisation RAR</p></div>
+    <div class="rar-mod-container">
+      <div class="en_cours_rar">
+          <p>Capacité en cours</p>
+          <p></p>
+      </div>
+      <div class="realiser_rar">
+          <p>Capacité réalisée</p>
+          <p></p>
+      </div>
+     <div class="taux_rar">
+         <p>Taux</p>
+         <p></p>
+      </div>
+ </div>
+</div>
+ </div>
+   <div class="acces-filair">
+    <h4>Realisation ODN </h4>
+   </div>
+   <div class="etat-realisations">
+     
+    
+    <table class="odn">
+    
+     <%= display_process_data(@process_data_report,[4,29,47,58],@project) %>
+    </table>
+    </div>
+      <% else  %>
+        <table class="list issue-report">
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th><%=l(:label_open_issues_plural)%></th>
+          <th><%=l(:label_closed_issues_plural)%></th>
+          <th><%=l(:label_total)%></th>
+        </tr>
+      </thead>
+      <tbody>
+      <% @trackers.each do |tracker| %>
+        <tr>
+          <td class="name">
+            <%= link_to tracker.name, project_issues_path(@project, :set_filter => 1, :tracker_id => tracker.id), :title => tracker.description %>
+          </td>
+          <td>
+            <%= link_to @open_issues_by_tracker[tracker].to_i, project_issues_path(@project, :set_filter => 1, :tracker_id => tracker.id) %>
+          </td>
+          <td>
+            <%= link_to (@total_issues_by_tracker[tracker].to_i - @open_issues_by_tracker[tracker].to_i), project_issues_path(@project, :set_filter => 1, :tracker_id => tracker.id, :status_id => 'c') %>
+          </td>
+          <td class="total">
+            <%= link_to @total_issues_by_tracker[tracker].to_i, project_issues_path(@project, :set_filter => 1, :tracker_id => tracker.id, :status_id => '*') %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <% end %>
+
+    <% end %>
+    
+  </div>
+  <% end %>
+
+ 
+</div>
+</div>
+<% content_for :sidebar do %>
+  <%= render :partial => 'members_box' %>
+<% end %>
+
+
+
+<% html_title(l(:label_overview)) -%>
+<%= javascript_include_tag "loader.js" %>
+    <%= javascript_include_tag "display.v1.js" %>
+
+
+
+
+  
+
