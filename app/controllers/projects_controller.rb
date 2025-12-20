@@ -141,47 +141,61 @@ class ProjectsController < ApplicationController
         end
       end
      format.api do
-         @offset, @limit = api_offset_and_limit
-         @project_count = scope.count
-         @projects = scope.offset(@offset).limit(@limit).to_a
-         project = Project.find(277)
-         @dot_json = report_do(project,:recp_json)
-         reprot_json = {}
- 
-         @dot_json.each do |key, value|
-              value_json = {}
-              
-              value.each do |k, v|
-                  value_json[k] = {total_inscrit:  v[:prevue][:consistance].to_i +  v[:en_cours_rar][:consistance].to_i + v[:realiser_rar][:consistance].to_i,
-                                   total_en_cours:  v[:en_cours_rar][:consistance].to_i + v[:en_cours_pa][:consistance].to_i,
-                                   total_realiser:  v[:realiser_pa][:consistance].to_i + v[:realiser_rar][:consistance].to_i, arret_global: v[:arret_global][:consistance].to_i
+      @offset, @limit = api_offset_and_limit
+      @project_count = scope.count
+      @projects = scope.offset(@offset).limit(@limit).to_a
+      project = Project.find(404)
+      @dot_json = report_do(project,:recp_json)
+      reprot_json = {}
+      id_dot_2025 = [405,406,407,408,409,410,411,412,413,414,415,416,417,418,419,420,421,422,423,424,425,426,
+                    427,428,429,430,431,432,433,434,435,436,437,438,439,440,441,442,443,444,445,446,447,448,
+                    449,450,451,452,453,454,455,456,457,458,459,460,461,462,463,464]     
 
-                                   #,prevue: v[:prevue][:consistance].to_i,en_cours_pa: v[:en_cours_pa][:consistance].to_i,
-                                   #en_cours_rar: v[:en_cours_rar][:consistance].to_i,realiser_pa: v[:realiser_pa][:consistance].to_i,
-                                   #realiser_rar: v[:realiser_rar][:consistance].to_i
-                                }
-             
-              end
-             
-             reprot_json[dot_name(key)] = value_json
-         end
+       id_dot_nil = []
+      @dot_json.each do |key, value|
+           value_json = {}
+           type = []
+           value.each do |k, v|
+             type << k.to_s
+               value_json[k] = {total_inscrit:  v[:prevue][:consistance].to_i +  v[:en_cours_rar][:consistance].to_i + v[:realiser_rar][:consistance].to_i,
+                                total_en_cours:  v[:en_cours_rar][:consistance].to_i + v[:en_cours_pa][:consistance].to_i,
+                                total_realiser:  v[:realiser_pa][:consistance].to_i + v[:realiser_rar][:consistance].to_i, arret_global: v[:arret_global][:consistance].to_i}
           
-        total_values = Hash.new { |hash, key| hash[key] = Hash.new(0) }
-        reprot_json.each do |region, sub_hashes|
-          sub_hashes.each do |sub_hash_name, sub_hash_values|
-             sub_hash_values.each do |key, value|
-             total_values[sub_hash_name][key] += value.to_i
-            end
           end
+         if !type.include?("ODN_Dev")
+           value_json = { "ODN_Dev": {total_inscrit:  0,total_en_cours: 0,total_realiser: 0, arret_global: 0} }.merge(value_json)
+         end
+         if !type.include?("ODN_Mod") 
+           value_json = value_json.merge({ "ODN_Mod": {total_inscrit:  0,total_en_cours: 0,total_realiser: 0, arret_global: 0} })
+         end
+         
+         id_dot_nil << key.to_i
+          reprot_json[dot_name(key)] = value_json
+      end   
+     
+        id_dot_nil = id_dot_2025 - id_dot_nil
+    
+        id_dot_nil.each do |dot|
+            reprot_json[dot_name(dot)] = { "ODN_Dev": {total_inscrit:  0,total_en_cours: 0,total_realiser: 0, arret_global: 0},
+                                            "ODN_Mod": {total_inscrit:  0,total_en_cours: 0,total_realiser: 0, arret_global: 0}}
         end
-        dg_entry = {
-         :dg => {
-           :ODN_Dev => total_values[:ODN_Dev],
-           :ODN_Mod => total_values[:ODN_Mod]}}
-        
-          reprot_json = dg_entry.merge(reprot_json) 
-          render json: reprot_json
+   
+     total_values = Hash.new { |hash, key| hash[key] = Hash.new(0) }
+     reprot_json.each do |region, sub_hashes|
+       sub_hashes.each do |sub_hash_name, sub_hash_values|
+          sub_hash_values.each do |key, value|
+          total_values[sub_hash_name][key] += value.to_i
+         end
        end
+     end
+     dg_entry = {
+      :dg => {
+        :ODN_Dev => total_values[:ODN_Dev],
+        :ODN_Mod => total_values[:ODN_Mod]}}
+     
+       reprot_json = dg_entry.merge(reprot_json) 
+       render json: reprot_json
+    end
        format.atom do
          projects = scope.reorder(:created_on => :desc).limit(Setting.feeds_limit.to_i).to_a
          render_feed(projects, :title => "#{Setting.app_title}: #{l(:label_project_latest)}")
@@ -296,7 +310,6 @@ class ProjectsController < ApplicationController
          @process_data_report  = report_do(@project,:total_dots)
          @report_par_dot = report_do(@project,:par_dots)
          @racc_objectif = report_do(@project,:racc_objectif)
-         @racc_realiser = report_do(@project,:racc_realiser)
         @open_issues_by_tracker = Issue.visible.open.where(cond).group(:tracker).count
         @total_issues_by_tracker = Issue.visible.where(cond).group(:tracker).count
 
@@ -445,7 +458,7 @@ class ProjectsController < ApplicationController
     end
   end
 
-   #------------------------ fonction de traitement reporting 
+ #------------------------ fonction de traitement reporting 
 
 def report_do(project,type_report)
   
@@ -461,6 +474,7 @@ def report_do(project,type_report)
        acces_prevue = v[24].to_i || 0
        acces_en_cours = (v[262].to_i * 8)  || 0
        acces_realisé = v[28].to_i || 0
+       etat_vendable = v[293].to_i || 0
        km_prevue = v[74].to_f || 0
        km_realise = v[27].to_f || 0
        scenario_dev = v[253].to_i == 291 
@@ -470,10 +484,11 @@ def report_do(project,type_report)
        acces_ftth_prevue = v[289].to_i || 0
        acces_cuivre_raccorder = v[241].to_i || 0
        acces_ftth_raccorder = v[242].to_i || 0
-       dist_fo_prevue = v[73].to_i || 0
-       dist_fo_poser = v[83].to_i || 0
-
-
+       dist_fo_prevue = v[73].to_f || 0
+       dist_fo_poser = v[83].to_f || 0
+       type_action = v[367].to_i || 0
+       montant_notifier = v[267].to_d || 0
+       montant_engager = v[:estimated_hours].to_d  || 0
 
      if tracker == 24
 
@@ -558,7 +573,7 @@ if [7,8,9,29,32,47,58,59,62].include?(tracker)
             result_dev[:nbr_non_entamer_pa] += 1
          end
 
-     when 47,60,66,67,68,70,76,77 
+     when 45,47,60,66,67,68,70,76,77
 
         if tracker == 58 || tracker == 59
            result_mod[:nbr_etude_en_cours] += 1
@@ -572,7 +587,7 @@ if [7,8,9,29,32,47,58,59,62].include?(tracker)
 
 #*********** VERIFICATION ETUDE EN COURS**************
 
-    when 56,64,69,78
+    when 56,64,69,78,88
 
       if tracker == 58 || tracker == 59
         result_mod[:nbr_etude_finalise] += 1
@@ -607,7 +622,7 @@ end
 
 #************************* Partie 4G ***********************************
 if tracker == 10
-if ["PA-2023", "PA-2022_reporté","HP-2023"].include?(exercice)
+if ["PA-2023", "PA-2022_reporté","HP-2023","PA-2024","HP-2024","PA-2023_reporté","PA-2024_reporté","PA-2025"].include?(exercice)
      
   result_dev[:nbr_prevue_pa] += 1
 
@@ -665,14 +680,248 @@ result_mod[:nbr_prevue_pa] += 1
 end
 end
 # ************************* FIN 4G ***********************************
-if ![7,8,9,10,24,29,32,47,58,59,62].include?(tracker)
-if ["PA-2023", "PA-2022_reporté","HP-2023"].include?(exercice) 
+
+if [64,65,67].include?(tracker)
+
+   result_dev[:nbr_prevue_pa] += 1
+   result_dev[:consistance_prevue_pa] += acces_prevue if [64,65].include?(tracker)
+   result_dev[:consistance_prevue_pa] += dist_fo_prevue if tracker == 67
+
+  case status_id
+
+    when 1
+        result_dev[:nbr_non_entamer_pa] += 1
+
+        result_dev[:consistance_non_entamer_pa] += acces_prevue  if [64,65].include?(tracker)
+        result_dev[:consistance_non_entamer_pa] += dist_fo_prevue if tracker == 67
+    when 89
+	    result_dev[:nbr_etude_en_cours] += 1
+        result_dev[:consistance_etude_en_cours] += acces_prevue  if [64,65].include?(tracker)
+       result_dev[:consistance_etude_en_cours] +=  dist_fo_prevue if tracker == 67
+
+	when 90
+	   result_dev[:nbr_etude_finalise] += 1
+       result_dev[:consistance_etude_finalise] += acces_prevue  if [64,65].include?(tracker)
+       result_dev[:consistance_etude_finalise] +=  dist_fo_prevue if tracker == 67
+
+	when 91
+	   result_dev[:nbr_consultaton_pa] += 1
+       result_dev[:consistance_consultation_pa] += acces_prevue  if [64,65].include?(tracker)
+
+       result_dev[:consistance_consultation_pa] +=  dist_fo_prevue if tracker == 67
+      
+       when 113
+        if tracker == 64
+            result_dev[:nbr_engager_pa] += 1
+            result_dev[:consistance_engager_pa] += acces_prevue
+       end
+
+     
+  end 
+
+
+end
+# partie Etablissement contrat
+#
+
+if [14].include?(tracker)
 
 result_dev[:nbr_prevue_pa] += 1
+ 
+  case status_id
+   when 1
+     result_dev[:nbr_non_entamer_pa] += 1
+   when 2
+     if ratio < 100
+       result_dev[:nbr_etude_en_cours] += 1
+     else
+       result_dev[:nbr_etude_finalise] += 1
+     end
+   
+   when 100   # statut   Commision_CDC
+        result_dev[:nbr_preparation_site] += 1
+   when 101  # statut  Etablissement CDC
+        result_dev[:nbr_site_valider] += 1
+   when 103 # statut CDC approuvé
+        result_dev[:nbr_demande_valider] += 1
+   when 3 # phase consultation
+        result_dev[:nbr_consultaton_pa] += 1
+   when 111  # Visa CCM accordeé
+         result_dev[:nbr_demande_installation] += 1
+   end
+end
+
+if [70].include?(tracker)
+
+result_mod[:nbr_prevue_pa] += 1
+ 
+  case status_id
+   when 1
+     result_mod[:nbr_non_entamer_pa] += 1
+   when 2
+     if ratio < 100
+       result_mod[:nbr_etude_en_cours] += 1
+     else
+       result_mod[:nbr_etude_finalise] += 1
+     end
+   
+   when 108   # statut  gré a gré approuvé C
+        result_mod[:nbr_preparation_site] += 1
+   when 101  # statut  Etablissement CDC
+        result_mod[:nbr_site_valider] += 1
+   when 110 # statut CDC approuvé
+        result_mod[:nbr_demande_valider] += 1
+   when 3 # phase consultation
+        result_mod[:nbr_consultaton_pa] += 1
+   when 102  # Contrat notifiée
+        result_mod[:nbr_prestation_execution] += 1 
+   end
+end
+
+
+# Partie Etablissement Acquisition et bon de commande BC/Lot
+if [21].include?(tracker)
+
+ result_dev[:nbr_prevue_pa] += 1
+  
+result_dev[:consistance_non_entamer_pa] += montant_notifier
+result_dev[:consistance_en_cours_pa] += montant_engager
+
+if ratio == 0
+result_dev[:consistance_demande_installation] += 1
+elsif  ratio < 100
+ result_dev[:consistance_demande_valider] += 1
+else
+ result_dev[:consistance_doter] += 1
+end
+  case status_id
+
+   when 1
+     result_dev[:nbr_non_entamer_pa] += 1
+   when 5  # statut En exécution
+    result_dev[:nbr_en_cours_pa] += 1
+   when 6
+    result_dev[:nbr_en_cours_rar] += 1
+
+  end 
+
+
+end
+
+
+if [68].include?(tracker)
+
+ result_mod[:nbr_prevue_pa] += 1
+    result_mod[:consistance_non_entamer_pa] += montant_notifier
+ result_mod[:consistance_en_cours_pa] += montant_engager
+   if ratio == 0
+      result_mod[:consistance_demande_installation] += 1
+   elsif  ratio < 100
+      result_mod[:consistance_demande_valider] += 1
+   else
+      result_mod[:consistance_doter] += 1
+    end
+
+  case status_id
+
+   when 1
+     result_mod[:nbr_non_entamer_pa] += 1
+   when 5  # statut En exécution
+    result_mod[:nbr_en_cours_pa] += 1
+   when 6
+    result_mod[:nbr_en_cours_rar] += 1
+  end
+end
+
+
+# Partie Etablissement Acquisition et bon de commande BC/Lot
+if [69].include?(tracker)
+
+   case status_id
+
+  
+   when 42
+     if type_action == 574
+        result_dev[:nbr_engager_pa] += 1
+     elsif type_action == 575
+        result_mod[:nbr_engager_pa] += 1
+    end
+   when 105  # statut En exécution
+     
+     if type_action == 574
+        result_dev[:nbr_demande_dotaion] += 1 
+    elsif type_action == 575
+        result_mod[:nbr_demande_dotaion] += 1 
+    end
+
+   when 106 # statut preparation
+     if type_action == 574     
+        result_dev[:nbr_MES] += 1
+    elsif type_action == 575
+        result_mod[:nbr_MES] += 1
+    end
+
+   when 107 # statut Recpetion 
+        if type_action == 574
+          result_dev[:nbr_en_exploitation] += 1
+        elsif type_action == 575
+           result_mod[:nbr_en_exploitation] += 1
+        end
+        
+    end
+end
+
+if [71].include?(tracker)
+
+case status_id
+
+  when 105 # En preparationi
+    result_mod[:nbr_prestation_preparation] += 1 
+  when 42  # Pret au lancement
+    result_mod[:nbr_prestation_engager] += 1 
+  when 106 # En execution
+    result_mod[:nbr_prestation_execution] += 1 
+  when 65  # traveaux acheves
+    result_mod[:nbr_prstation_achever] += 1 
+
+  end
+end
+
+
+
+
+if [72].include?(tracker)
+
+case status_id
+ 
+ 
+   when 112  # En negociation
+     if type_action == 597
+       result_dev[:nbr_prestation_engager] += 1
+     elsif type_action == 598
+         result_mod[:nbr_prestation_engager] += 1
+     end
+  when 102 # Contrat notifié
+    if type_action == 597
+        result_dev[:nbr_prestation_execution] += 1
+    elsif  type_action == 598
+       result_mod[:nbr_prestation_execution] += 1
+    end
+
+  end
+end
+
+if ![7,8,9,10,14,21,24,29,32,47,58,59,62,64,65,67,68,69,70,71,72].include?(tracker)
+if ["PA-2023", "PA-2022_reporté","HP-2023","PA-2024","HP-2024","PA-2023_reporté","PA-2025","PA-2024_reporté","HP-2025"].include?(exercice) 
+
+result_dev[:nbr_prevue_pa] += 1
+result_dev[:nbr_prevue_hp] += 1 if exercice.include?("HP")
+
   if tracker == 4
      result_dev[:consistance_prevue_pa] +=  km_prevue 
   elsif tracker == 6
     result_dev[:consistance_prevue_pa] += dist_fo_prevue
+    result_dev[:consistance_prevue_hp] += dist_fo_prevue if exercice.include?("HP")
   end
 
 case status_id
@@ -757,6 +1006,11 @@ when 4,6,7
   elsif tracker == 6
     result_dev[:nbr_en_cours_pa] += 1
     result_dev[:consistance_en_cours_pa] += dist_fo_prevue
+   
+ if exercice.include?("HP")
+    result_dev[:nbr_en_cours_hp] += 1
+    result_dev[:consistance_en_cours_hp] += dist_fo_prevue
+ end
  else
      result_dev[:nbr_en_cours_pa] += 1
   end
@@ -773,10 +1027,17 @@ when 5
        end
     elsif tracker == 4
         result_dev[:nbr_en_cours_pa] += 1
-        result_dev[:consistance_en_cours_pa] +=  dist_fo_prevue  
+        result_dev[:consistance_en_cours_pa] +=  km_prevue  
     elsif tracker == 6
       result_dev[:nbr_en_cours_pa] += 1
       result_dev[:consistance_en_cours_pa] +=  dist_fo_prevue  
+     if exercice.include?("HP")
+        result_dev[:nbr_en_cours_hp] += 1
+        result_dev[:consistance_en_cours_hp] += dist_fo_prevue
+     end
+
+    
+    
     else
         result_dev[:nbr_en_cours_pa] += 1
      end
@@ -786,9 +1047,20 @@ when 5
       if scenario_dev
          result_dev[:nbr_realiser_pa] += 1
          result_dev[:consistance_realiser_pa] += acces_realisé
+
+		 if etat_vendable == 354
+		    result_dev[:nbr_vendable] += 1
+		    result_dev[:consistance_vendable] += acces_realisé
+		 end
        else
          result_mod[:nbr_realiser_pa] += 1
          result_mod[:consistance_realiser_pa] += acces_realisé
+                 
+                 if etat_vendable == 354
+		    result_mod[:nbr_vendable] += 1
+		    result_mod[:consistance_vendable] += acces_realisé
+		 end
+       
        end
     elsif tracker == 4
         result_dev[:nbr_realiser_pa] += 1
@@ -796,7 +1068,13 @@ when 5
     elsif tracker == 6
         result_dev[:nbr_realiser_pa] += 1
         result_dev[:consistance_realiser_pa] += dist_fo_poser
-   else
+   
+     if exercice.include?("HP")  
+        result_dev[:nbr_realiser_hp] += 1
+        result_dev[:consistance_realiser_hp] += dist_fo_poser
+     end
+    
+    else
         result_dev[:nbr_realiser_pa] += 1 
    end
 end
@@ -807,9 +1085,25 @@ when 9,10,11,12,13,61
     if scenario_dev
         result_dev[:nbr_realiser_pa] += 1
         result_dev[:consistance_realiser_pa] += acces_realisé
+                 result_dev[:nbr_achever_odn] += 1
+		 result_dev[:consistance_achever_odn] += acces_realisé
+		 if etat_vendable == 354
+		    result_dev[:nbr_vendable] += 1
+		    result_dev[:consistance_vendable] += acces_realisé
+		 end
+    
+    
     else
         result_mod[:nbr_realiser_pa] += 1
         result_mod[:consistance_realiser_pa] += acces_realisé
+
+                 result_mod[:nbr_achever_odn] += 1
+		 result_mod[:consistance_achever_odn] += acces_realisé
+		 if etat_vendable == 354
+		    result_mod[:nbr_vendable] += 1
+		    result_mod[:consistance_vendable] += acces_realisé
+		 end
+
     end
   elsif tracker == 4
     result_dev[:nbr_realiser_pa] += 1
@@ -817,6 +1111,12 @@ when 9,10,11,12,13,61
   elsif tracker == 6
     result_dev[:nbr_realiser_pa] += 1
     result_dev[:consistance_realiser_pa] += dist_fo_poser
+      if exercice.include?("HP")
+        result_dev[:nbr_realiser_hp] += 1
+        result_dev[:consistance_realiser_hp] += dist_fo_poser
+     end
+
+
  else
      result_dev[:nbr_realiser_pa] += 1
 end
@@ -836,10 +1136,10 @@ when 3,42,58
  if tracker == 60
    if scenario_dev
       result_dev[:nbr_en_cours_rar] += 1
-      result_dev[:consistance_en_cours_rar] += 0
+      result_dev[:consistance_en_cours_rar] += acces_en_cours 
    else
       result_mod[:nbr_en_cours_rar] += 1
-      result_mod[:consistance_en_cours_rar] += 0
+      result_mod[:consistance_en_cours_rar] += acces_en_cours 
    end
 elsif tracker == 4
     result_dev[:nbr_en_cours_rar] += 1
@@ -877,9 +1177,25 @@ when 9,10,11,12,13,61
       if scenario_dev
          result_dev[:nbr_réalisé_rar] += 1
          result_dev[:consistance_realiser_rar] += acces_realisé
+            result_dev[:nbr_achever_odn] += 1
+		 result_dev[:consistance_achever_odn] += acces_realisé
+		 if etat_vendable == 354
+		    result_dev[:nbr_vendable] += 1
+		    result_dev[:consistance_vendable] += acces_realisé
+		 end
+
+
       else
           result_mod[:nbr_réalisé_rar] += 1
           result_mod[:consistance_realiser_rar] += acces_realisé
+                 result_mod[:nbr_achever_odn] += 1
+		 result_mod[:consistance_achever_odn] += acces_realisé
+		 if etat_vendable == 354
+		    result_mod[:nbr_vendable] += 1
+		    result_mod[:consistance_vendable] += acces_realisé
+		 end
+      
+      
       end
     elsif tracker == 4
       result_dev[:nbr_réalisé_rar] += 1
@@ -907,8 +1223,8 @@ when 5
           result_dev[:nbr_en_cours_rar] += 1
           result_dev[:consistance_en_cours_rar] += km_prevue
         elsif tracker == 6
-          result_dev[:nbr_en_cours_pa] += 1
-          result_dev[:consistance_en_cours_pa] += dist_fo_prevue
+          result_dev[:nbr_en_cours_rar] += 1
+          result_dev[:consistance_en_cours_rar] += dist_fo_prevue
        else
            result_dev[:nbr_en_cours_rar] += 1
      end
@@ -918,9 +1234,20 @@ when 5
         if scenario_dev
            result_dev[:nbr_réalisé_rar] += 1
            result_dev[:consistance_realiser_rar] += acces_realisé
+
+                 if etat_vendable == 354
+		    result_dev[:nbr_vendable] += 1
+		    result_dev[:consistance_vendable] += acces_realisé
+		 end
+
         else
            result_mod[:nbr_réalisé_rar] += 1
            result_mod[:consistance_realiser_rar] += acces_realisé
+
+                 if etat_vendable == 354
+		    result_mod[:nbr_vendable] += 1
+		    result_mod[:consistance_vendable] += acces_realisé
+		 end
        end
     elsif tracker == 4
         result_dev[:nbr_réalisé_rar] += 1
@@ -964,9 +1291,9 @@ end
   issues = Issue.visible.open.where(cond)
               .where(tracker_id:  tracker_ids)
               .includes(:custom_values)
-              .where(custom_values: { custom_field_id:[6,24,74,27,28,73,83,241,242, 286, 262, 253,288,289] })
+              .where(custom_values: { custom_field_id:[6,24,74,27,28,73,83,241,242, 286, 262, 253,267,288,289,293,367] })
 
-  data = issues.pluck(:project_id, :id, :tracker_id, :status_id,:done_ratio, 'custom_values.custom_field_id', 'custom_values.value')
+  data = issues.pluck(:project_id, :id, :tracker_id, :status_id,:done_ratio,:estimated_hours, 'custom_values.custom_field_id', 'custom_values.value')
               .map do |ligne|
                 {
                   project_id: ligne[0],
@@ -974,7 +1301,8 @@ end
                   tracker_id: ligne[2],
                   status_id: ligne[3],
                   done_ratio: ligne[4],
-                  ligne[5].to_i => ligne[6] 
+                  estimated_hours: ligne[5],
+                  ligne[6].to_i => ligne[7]          
                 }
               end
               .group_by { |k| [k[:tracker_id],k[:project_id]] }
@@ -994,6 +1322,8 @@ end
                       position: position,
                       nbr_prevue_pa: 0,
                       consistance_prevue_pa: 0, 
+                      nbr_prevue_hp: 0,
+                      consistance_prevue_hp: 0,
                       nbr_non_entamer_pa: 0,
                       consistance_non_entamer_pa: 0, 
                       nbr_etude_en_cours: 0, 
@@ -1006,13 +1336,21 @@ end
                       consistance_engager_pa: 0,  
                       nbr_en_cours_pa: 0,
                       consistance_en_cours_pa: 0,
+                      nbr_en_cours_hp: 0,
+                      consistance_en_cours_hp: 0,
                       nbr_en_cours_rar: 0,
                       consistance_en_cours_rar: 0,
                       nbr_réalisé_rar: 0, 
                       consistance_realiser_rar: 0,
                       nbr_realiser_pa: 0, 
-                      consistance_realiser_pa: 0, 
+                      consistance_realiser_pa: 0,
+                      nbr_realiser_hp: 0,
+                      consistance_realiser_hp: 0, 
                       nbr_arret_global: 0,
+                      nbr_achever_odn: 0,
+		      consistance_achever_odn: 0,
+		      nbr_vendable: 0,
+		      consistance_vendable: 0,
                       consistance_arret_global: 0,
                       nbr_cloturer:0,
                       consistance_cloturer:0,
@@ -1035,8 +1373,15 @@ end
                       nbr_MES:0,
                       consistance_MES:0,
                       nbr_en_exploitation:0,
-                      consistance_en_exploitation:0
-
+                      consistance_en_exploitation:0i,
+                      nbr_prestation_preparation: 0,
+                      consistance_prestation_preparation:0,
+                      nbr_prestation_engager:0,
+                      consistance_prestation_engager:0,
+                      nbr_prestation_execution:0,
+                      consistance_prestation_execution:0,
+                      nbr_prstation_achever:0,
+                      consistance_prestation_achever:0
                       
                     }
                     
@@ -1048,8 +1393,35 @@ end
                   process_normalisation(key,v,result_dev,result_mod)         
                end              
      # --------------------------------------------------------------------------------------------------                       
-        
-     if key[0].to_i  == 60 
+    
+
+     if key[0].to_i  == 69 
+       result_dev[:tracker_id] = 21 
+       result_mod[:tracker_id] = 68
+       result_dev[:nbr_prevue_pa]  = 0
+       result_mod[:nbr_prevue_pa]  = 0
+       result_dev[:nbr_installer]  = 0
+       result_mod[:nbr_installer]  = 0
+     
+          tbl << {[:Acquisition,key[1]] => result_dev.dup}
+          tbl << {[:Acquisition_realisation,key[1]] => result_mod.dup}
+      elsif  key[0].to_i == 71
+       result_mod[:tracker_id] = 68
+       tbl << {[:Acquisition_realisation,key[1]] => result_mod.dup}
+     elsif  key[0].to_i  == 21 
+          tbl << {[:Acquisition,key[1]] => result_dev.dup}
+     elsif key[0].to_i == 68     
+          tbl << {[:Acquisition_realisation,key[1]] => result_mod.dup}
+     elsif key[0].to_i == 14
+          tbl << {[:Contrat,key[1]] => result_dev.dup}
+     elsif key[0].to_i == 72
+           result_dev[:tracker_id] = 14
+           #result_mod[:tracker_id] = 70
+           tbl << {[:Contrat,key[1]] => result_dev.dup}
+           #tbl << {[:Contrat_gre,key[1]] => result_mod.dup}
+     elsif key[0].to_i == 70
+           tbl << {[:Contrat_gre,key[1]] => result_mod.dup}
+     elsif key[0].to_i  == 60 
       result_dev[:tracker_id] = 47 
       result_dev[:nbr_prevue_pa] = 0
       result_dev[:consistance_prevue_pa] = 0
@@ -1130,9 +1502,14 @@ end
      tracker_id: value[:tracker_id].to_i,
      position: value[:position],
      prevue: {
-       nbr: value[:nbr_prevue_pa],
+       nbr: value[:nbr_prevue_pa].to_i,
        consistance: value[:consistance_prevue_pa].to_d
      },
+     prevue_hp: {
+       nbr: value[:nbr_prevue_hp].to_i,
+       consistance: value[:consistance_prevue_hp].to_d
+     },
+
      non_entamer: {
        nbr: value[:nbr_non_entamer_pa].to_i,
        consistance: value[:consistance_non_entamer_pa].to_d
@@ -1157,6 +1534,10 @@ end
        nbr: value[:nbr_en_cours_pa].to_i,
        consistance: value[:consistance_en_cours_pa].to_d
      },
+      en_cours_hp: {
+       nbr: value[:nbr_en_cours_hp].to_i,
+       consistance: value[:consistance_en_cours_hp].to_d
+     },
      en_cours_rar: {
        nbr: value[:nbr_en_cours_rar].to_i,
        consistance: value[:consistance_en_cours_rar].to_d
@@ -1169,6 +1550,18 @@ end
        nbr: value[:nbr_realiser_pa].to_i,
        consistance: value[:consistance_realiser_pa].to_d
      },
+      realiser_hp: {
+       nbr: value[:nbr_realiser_hp].to_i,
+       consistance: value[:consistance_realiser_hp].to_d
+     },
+     achever_odn: {
+	nbr: value[:nbr_achever_odn].to_i,
+	consistance: value[:consistance_achever_odn].to_i
+	 },
+     vendable: {
+	nbr: value[:nbr_vendable].to_i,
+	consistance: value[:consistance_vendable].to_i
+	   },
      arret_global: {
        nbr: value[:nbr_arret_global].to_i,
        consistance: value[:consistance_arret_global].to_d
@@ -1217,8 +1610,27 @@ end
        en_exploitation: {
          nbr: value[:nbr_en_exploitation].to_i,
          consistance: value[:consistance_en_exploitation].to_i
-     }
-       
+     },
+      prestation_preparation: {
+         nbr: value[:nbr_prestation_preparation].to_i,
+         consistance: value[:consistance_prestation_preparation].to_i
+     },
+    
+     prestation_engager: {
+         nbr: value[:nbr_prestation_engager].to_i,
+         consistance: value[:consistance_prestation_engager].to_i
+     },
+      prestation_execution: {
+         nbr: value[:nbr_prestation_execution].to_i,
+         consistance: value[:consistance_prestation_execution].to_i
+     },
+
+      prestation_achever: {
+        nbr: value[:nbr_prstation_achever].to_i,
+         consistance: value[:consistance_prestation_achever].to_i
+     } 
+
+
    }.compact
    tbl_dot << tmp.deep_dup
  end
@@ -1292,9 +1704,7 @@ end
  elsif type_report == :recp_json
    return recp_json
  elsif type_report == :racc_objectif
-  return get_valeur_from_tracker(new_data,:Racc_clients,:prevue)
-elsif type_report == :racc_realiser
-  return get_valeur_from_tracker(new_data,:Racc_clients,:realiser_pa)
+  return get_valeur_from_tracker(new_data,[:ODN_Dev,:ODN_Mod])
  end 
 end # fin de la methode report_do(project)
 #  declaration fonction
@@ -1302,34 +1712,114 @@ end # fin de la methode report_do(project)
 
 
 
-
-
   private
-   
-def dot_name(id) 
+
+
+  def dot_name(id) 
       
     id_to_name = { 
-        276 => "Adrar",278 => "Aïn Defla",279 =>  "In Salah",280 =>  "Aïn Témouchent",281 =>  "Alger centre",282 =>  "Alger est",283 =>  "Alger ouest",284 =>  "Annaba",285 =>  "B.B.A",
-        287 =>  "B.B.M",288 =>  "Batna",289 =>  "Béchar",290 =>  "Béjaïa",291 =>  "Béni Abbès",292 =>  "Biskra",293 =>  "Blida",294 =>  "Bouira",295 =>  "Boumerdès",296 =>  "Chlef",297 =>  "Constantine",
-        298 =>  "Djanet",299 =>  "Djelfa", 300 =>  "El Bayadh",301 =>  "El Meniaa",302 =>  "El M'Ghair",303 =>  "El Oued",304 =>  "El Tarf",305 =>  "Ghardaïa",306 =>  "Guelma",307 =>  "Illizi",
-        308 =>  "In Guezzam",309 =>  "Jijel",310 =>  "Khenchela",311 =>  "Laghouat",312 =>  "M'Sila",313 =>  "Mascara",314 =>  "Médéa",315 =>  "Mila",316 =>  "Mostaganem",317 =>  "Naâma",318 =>  "O.E.B",
-        319 =>  "Oran",320 =>  "Ouargla",321 =>  "Ouled Djellal",322 =>  "Relizane",323 =>  "S.B.A",324 =>  "Saïda",325 =>  "Sétif",326 =>  "Skikda",327 =>  "Souk Ahras",328 =>  "Tamanrasset",
-        329 =>  "Tébessa",330 =>  "Tiaret",331 =>  "Tindouf",332 =>  "Timimoun",333 =>  "Tipaza",334 =>  "Tissemsilt",335 =>  "Tizi Ouzou",336 =>  "Tlemcen",337 =>  "Touggourt" }
+      276 => "Adrar",278 => "Aïn Defla",279 =>  "In Salah",280 =>  "Aïn Témouchent",281 =>  "Alger centre",282 =>  "Alger est",283 =>  "Alger ouest",284 =>  "Annaba",285 =>  "B.B.A",
+      287 =>  "B.B.M",288 =>  "Batna",289 =>  "Béchar",290 =>  "Béjaïa",291 =>  "Béni Abbès",292 =>  "Biskra",293 =>  "Blida",294 =>  "Bouira",295 =>  "Boumerdès",296 =>  "Chlef",297 =>  "Constantine",
+      298 =>  "Djanet",299 =>  "Djelfa", 300 =>  "El Bayadh",301 =>  "El Meniaa",302 =>  "El M'Ghair",303 =>  "El Oued",304 =>  "El Tarf",305 =>  "Ghardaïa",306 =>  "Guelma",307 =>  "Illizi",
+      308 =>  "In Guezzam",309 =>  "Jijel",310 =>  "Khenchela",311 =>  "Laghouat",312 =>  "M'Sila",313 =>  "Mascara",314 =>  "Médéa",315 =>  "Mila",316 =>  "Mostaganem",317 =>  "Naâma",318 =>  "O.E.B",
+      319 =>  "Oran",320 =>  "Ouargla",321 =>  "Ouled Djellal",322 =>  "Relizane",323 =>  "S.B.A",324 =>  "Saïda",325 =>  "Sétif",326 =>  "Skikda",327 =>  "Souk Ahras",328 =>  "Tamanrasset",
+      329 =>  "Tébessa",330 =>  "Tiaret",331 =>  "Tindouf",332 =>  "Timimoun",333 =>  "Tipaza",334 =>  "Tissemsilt",335 =>  "Tizi Ouzou",336 =>  "Tlemcen",337 =>  "Touggourt" ,
+      343 => "Adrar",344 => "Aïn Defla",345 => "Aïn Témouchent",346 => "Alger centre",347 => "Alger est",348 => "Alger ouest",349 => "Annaba",350 => "B.B.A",351 => "B.B.M",352 => "Batna",
+      353 => "Béchar",354 => "Béjaïa",355 => "Béni Abbès",356 => "Biskra",357 => "Blida",358 => "Bouira",360 => "Boumerdès",361 => "Chlef",362 => "Constantine",363 => "Djanet",364 => "Djelfa",
+      365 => "El Bayadh",366 => "El M'Ghair",367 => "El Meniaa",368 => "El Oued",369 => "El Tarf",370 => "Ghardaïa",371 => "Guelma",372 => "Illizi",373 => "In Guezzam",374 => "In Salah",375 => "Jijel",
+      376 => "Khenchela",377 => "Laghouat",378 => "M'Sila",379 => "Mascara",380 => "Médéa",381 => "Mila",382 => "Mostaganem",383 => "Naâma",384 => "O.E.B",385 => "Oran",386 => "Ouargla",387 => "Ouled Djellal",
+      388 => "Relizane",389 => "S.B.A",390 => "Saïda",391 => "Sétif",392 => "Skikda",393 => "Souk Ahras",394 => "Tamanrasset",395 => "Tébessa",396 => "Tiaret",397 => "Timimoun",398 => "Tindouf",399 => "Tipaza",
+      400 => "Tissemsilt",401 => "Tizi Ouzou",402 => "Tlemcen",403 => "Touggourt",405 => "Adrar",406 => "Aïn Defla", 407 => "Aïn Témouchent",408 => "Alger centre",
+  409 => "Alger est",
+  410 => "Alger ouest",
+  411 => "Annaba",
+  412 => "B.B.A",
+  413 => "B.B.M",
+  414 => "Batna",
+  415 => "Béchar",
+  416 => "Béjaïa",
+  417 => "Béni Abbès",
+  418 => "Biskra",
+  419 => "Blida",
+  420 => "Bouira",
+  421 => "Boumerdès",
+  422 => "Chlef",
+  423 => "Constantine",
+  424 => "Djanet",
+  425 => "Djelfa",
+  426 => "El Bayadh",
+  427 => "El M'Ghair",
+  428 => "El Meniaa",
+  429 => "El Oued",
+  430 => "El Tarf",
+  431 => "Ghardaïa",
+  432 => "Guelma",
+  433 => "Illizi",
+  434 => "In Guezzam",
+  435 => "In Salah",
+  436 => "Jijel",
+  437 => "Khenchela",
+  438 => "Laghouat",
+  439 => "M'Sila",
+  440 => "Mascara",
+  441 => "Médéa",
+  442 => "Mila",
+  443 => "Mostaganem",
+  444 => "Naâma",
+  445 => "O.E.B",
+  446 => "Oran",
+  447 => "Ouargla",
+  448 => "Ouled Djellal",
+  449 => "Relizane",
+  450 => "S.B.A",
+  451 => "Saïda",
+  452 => "Sétif",
+  453 => "Skikda",
+  454 => "Souk Ahras",
+  455 => "Tamanrasset",
+  456 => "Tébessa",
+  457 => "Tiaret",
+  458 => "Timimoun",
+  459 => "Tindouf",
+  460 => "Tipaza",
+  461 => "Tissemsilt",
+  462 => "Tizi Ouzou",
+  463 => "Tlemcen",
+  464 => "Touggourt" }
 
      return id_to_name[id.to_i]
   end
  
-  def get_valeur_from_tracker(tbl, tracker, typ_value)
-    sous_tableau = tbl.select { |element| element[0] == tracker }
+ 
+def get_valeur_from_tracker(tbl, tracker)
+    taux_achever = 0
+    taux_vendable = 0
+    cap_achever = 0
+    cap_vendable = 0
+    capacity = 0
     
-    if sous_tableau.any?
-      valeur = sous_tableau[0][1][typ_value]
-      return [valeur[:nbr].to_i,valeur[:consistance].to_i]
-    else
-      return "0-0"
-    end
-  end
+    if tbl.any?
 
+
+      tbl.each do |action| 
+         if tracker.include?(action[0])
+            
+           capacity += action[1][:realiser_pa][:consistance].to_i +  action[1][:realiser_rar][:consistance].to_i 
+            cap_achever += action[1][:achever_odn][:consistance].to_i
+            cap_vendable += action[1][:vendable][:consistance].to_i
+          
+           if capacity != 0
+             taux_achever = cap_achever * 100 / capacity
+             taux_vendable = cap_vendable * 100  / capacity
+            end
+
+
+         end
+      end 
+    end
+return [cap_achever, taux_achever, cap_vendable, taux_vendable]
+  
+  end
 
   # Returns the ProjectEntry scope for index
   def project_scope(options={})
@@ -1355,3 +1845,4 @@ def dot_name(id)
     end
   end
 end
+

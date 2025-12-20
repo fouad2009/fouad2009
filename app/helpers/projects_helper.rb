@@ -202,8 +202,149 @@ module ProjectsHelper
       ancestors << project unless project.leaf?
     end
   end
+#-------------- METHODES POUR LES TABLEAUX DE SUIVI DES PROJETS  ------------------
+def display_process_data(process_data, trackers, project, data_chart = {})
+  table_content = "".html_safe
+  #data_chart = {}
 
-def display_process_data(process_data,trackers,project)
+  # =========================
+  # THEAD
+  # =========================
+  table_content += content_tag(:thead) do
+    content_tag(:tr) do
+      concat content_tag(:th, "Prévisions PA", class: "Previsions", colspan: 2)
+      concat content_tag(:th, "Phase Étude PA", class: "phase-etude", colspan: 3)
+      concat content_tag(:th, "Phase Réalisation PA", class: "etat-realisation", colspan: 4)
+      concat content_tag(:th, "Réalisations RAR", class: "etat-realisation", colspan: 2)
+      concat content_tag(:th, "", colspan: 2)
+    end +
+    content_tag(:tr) do
+      content_tag(:th, "Action", class: "action") +
+      content_tag(:th, "Objectif", class: "objectf") +
+      content_tag(:th, "Non entamé") +
+      content_tag(:th, "Étude en cours") +
+      content_tag(:th, "Étude finalisée") +
+      content_tag(:th, "En consultation") +
+      content_tag(:th, "Engagées") +
+      content_tag(:th, "En cours PA") +
+      content_tag(:th, "Réalisées PA") +
+      content_tag(:th, "En cours RAR") +
+      content_tag(:th, "Réalisées RAR") +
+      content_tag(:th, "À l'arrêt") +
+      content_tag(:th, "Clôturé")
+    end
+  end
+
+  # =========================
+  # TBODY + DATA CHART
+  # =========================
+  process_data
+    .select { |_, v| trackers.include?(v[:tracker_id].to_i) }
+    .each_with_index do |(key, value), index|
+      # ---- Données pour Chart.js
+      
+      
+     
+   data_chart[value[:tracker_id]] = {
+  prevue: {
+    nbr: value[:prevue][:nbr].to_f,
+    consistance: value[:prevue][:consistance].to_f
+  },
+
+   prevue_hp: {
+    nbr: value[:prevue_hp][:nbr].to_f,
+    consistance: value[:prevue_hp][:consistance].to_f
+  },
+
+  non_entamer: {
+    nbr: value[:non_entamer][:nbr].to_i,
+    consistance: value[:non_entamer][:consistance].to_f
+  },
+  etude_en_cours: {
+    nbr: value[:etude_en_cours][:nbr].to_i,
+    consistance: value[:etude_en_cours][:consistance].to_f
+  },
+  etude_finalise: {
+    nbr: value[:etude_finalise][:nbr].to_i,
+    consistance: value[:etude_finalise][:consistance].to_f
+  },
+  consultation: {
+    nbr: value[:consultation][:nbr].to_i,
+    consistance: value[:consultation][:consistance].to_f
+  },
+  engager: {
+    nbr: value[:engager][:nbr].to_i,
+    consistance: value[:engager][:consistance].to_f
+  },
+  en_cours_pa: {
+    nbr: value[:en_cours_pa][:nbr].to_i,
+    consistance: value[:en_cours_pa][:consistance].to_f
+  },
+   en_cours_hp: {
+    nbr: value[:en_cours_hp][:nbr].to_i,
+    consistance: value[:en_cours_hp][:consistance].to_f
+  },
+  realiser_pa: {
+    nbr: value[:realiser_pa][:nbr].to_i,
+    consistance: value[:realiser_pa][:consistance].to_f
+  },
+   realiser_hp: {
+    nbr: value[:realiser_hp][:nbr].to_i,
+    consistance: value[:realiser_hp][:consistance].to_f
+  },
+  en_cours_rar: {
+    nbr: value[:en_cours_rar][:nbr].to_i,
+    consistance: value[:en_cours_rar][:consistance].to_f
+  },
+  realiser_rar: {
+    nbr: value[:realiser_rar][:nbr].to_i,
+    consistance: value[:realiser_rar][:consistance].to_f
+  },
+  arret_global: {
+    nbr: value[:arret_global][:nbr].to_i,
+    consistance: value[:arret_global][:consistance].to_f
+  },
+  cloturer: {
+    nbr: value[:cloturer][:nbr].to_i,
+    consistance: value[:cloturer][:consistance].to_f
+  }
+} if value[:tracker_id] == 6
+
+
+      # ---- Ligne tableau
+      table_content += content_tag(:tbody) do
+        content_tag(:tr, class: index.even? ? 'even' : 'odd') do
+          content_tag(:td, formatted_key_title(key), class: "action-cell") +
+          content_tag(:td, display_data_v(key, value, :prevue, project)) +
+          content_tag(:td, display_data_v(key, value, :non_entamer, project)) +
+          content_tag(:td, display_data_v(key, value, :etude_en_cours, project)) +
+          content_tag(:td, display_data_v(key, value, :etude_finalise, project)) +
+          content_tag(:td, display_data_v(key, value, :consultation, project)) +
+          content_tag(:td, display_data_v(key, value, :engager, project)) +
+          content_tag(:td, display_data_v(key, value, :en_cours_pa, project)) +
+          content_tag(:td, display_data_v(key, value, :realiser_pa, project)) +
+          content_tag(:td, display_data_v(key, value, :en_cours_rar, project)) +
+          content_tag(:td, display_data_v(key, value, :realiser_rar, project)) +
+          content_tag(:td, display_data_v(key, value, :arret_global, project)) +
+          content_tag(:td, display_data_v(key, value, :cloturer, project))
+        end
+      end
+    end
+  # =========================
+  # DATA POUR JAVASCRIPT (Redmine 5.1)
+  # =========================
+  
+  # Ajout des données sous forme JSON pour un usage en JavaScript
+  
+  
+ 
+  table_content
+end
+
+
+
+#-------------- Fin methode display data----------------------
+def process_pa(process_data,trackers,project)
     # Ajouter une ligne pour "Réseau ODN" au début de la table
      table_content = "".html_safe
 
@@ -213,27 +354,20 @@ def display_process_data(process_data,trackers,project)
 
     
     content_tag(:tr) do
-      concat(content_tag(:th, "Previsions PA", class: "Previsions", colspan: 2))
-      concat(content_tag(:th, "Phase Etude PA", class: "phase-etude", colspan: 3))
-      concat(content_tag(:th, "Phase Réalisation PA", class: "etat-realisation", colspan: 4))
-      concat(content_tag(:th, "Réalisations RAR", class: "etat-realisation", colspan: 2))
-      concat(content_tag(:th, "", class: "etat-realisation", colspan: 1))
-      concat(content_tag(:th, "", class: "etat-realisation", colspan: 1))
+      concat(content_tag(:th, "", class: "Previsions", colspan: 2))
+      concat(content_tag(:th, "Phase 1", class: "phase-etude", colspan: 3))
+      concat(content_tag(:th, "Phase 2", class: "etat-realisation", colspan: 2))
     end +
     content_tag(:tr) do
       content_tag(:th, "Action", class: "action") +
-      content_tag(:th, "Objectf", class: "objectf") +
-      content_tag(:th, "Non Entamer", class: "non-entamer") +
-      content_tag(:th, "Etude en cours", class: "etude-en-cours") +
-      content_tag(:th, "Etude finalisée", class: "etude-finalise") +
-      content_tag(:th, "En consultation", class: "en-consultation") +
-      content_tag(:th, "Engagées", class: "engagees") +
-      content_tag(:th, "En cours", class: "en-cours-pa") +
-      content_tag(:th, "Realisées", class: "realisees-pa") +
-      content_tag(:th, "En cours", class: "en-cours-rar") +
-      content_tag(:th, "Realisées", class: "realisees-rar") +
-      content_tag(:th, "à l'arrêt", class: "arret")+
-      content_tag(:th, "Clôturé", class: "cloture")
+      content_tag(:th, "Total", class: "objectf") +
+      content_tag(:th, "Initialisation", class: "non-entamer") +
+      
+      content_tag(:th, "Classement_géo", class: "etude-en-cours") +
+      content_tag(:th, "Recenssement approuvé", class: "etude-en-cours") +
+      
+      content_tag(:th, "Estimation", class: "etude-finalise") +
+      content_tag(:th, "Validé", class: "en-consultation")
     end
   end
   
@@ -244,17 +378,11 @@ def display_process_data(process_data,trackers,project)
           content_tag(:td, formatted_key_title(key), class: "action-cell", style: "text-align: left;") +
             content_tag(:td, display_data_v(key,value,:prevue,project), class: "objectf-cell") +
             content_tag(:td, display_data_v(key,value,:non_entamer,project), class: "non-entamer-cell") +
+             content_tag(:td, display_data_v(key,value,:engager,project), class: "etude-en-cours-cell") +
             content_tag(:td, display_data_v(key,value,:etude_en_cours,project), class: "etude-en-cours-cell") +
             content_tag(:td, display_data_v(key,value,:etude_finalise,project), class: "etude-finalise-cell") +
-            content_tag(:td, display_data_v(key,value,:consultation,project), class: "en-consultation-cell") +
-            content_tag(:td, display_data_v(key,value,:engager,project), class: "engagees-cell") +
-            content_tag(:td, display_data_v(key,value,:en_cours_pa,project), class: "en-cours-pa-cell") +
-            content_tag(:td, display_data_v(key,value,:realiser_pa,project), class: "realisees-pa-cell") +
-            content_tag(:td, display_data_v(key,value,:en_cours_rar,project), class: "en-cours-rar-cell") +
-            content_tag(:td, display_data_v(key,value,:realiser_rar,project), class: "realisees-rar-cell") +
-            content_tag(:td, display_data_v(key,value,:arret_global,project), class: "arret-cell") +
-            content_tag(:td, display_data_v(key,value,:cloturer,project), class: "cloture-cell")
-        end.html_safe 
+            content_tag(:td, display_data_v(key,value,:consultation,project), class: "en-consultation-cell")
+         end.html_safe 
       end
         # Ajouter une ligne supplémentaire après la 4ème ligne avec un contenu spécifique
         #(index == 3 ? content_tag(:tr, content_tag(:td, "Réseau 4G", class: "action-cell", colspan: 11)) : '').html_safe
@@ -262,6 +390,7 @@ def display_process_data(process_data,trackers,project)
   
     return table_content
   end
+
 
 #  display la partie active *********************************************
 
@@ -325,7 +454,521 @@ def display_process_data(process_data,trackers,project)
   
     return table_content
   end
+
+
+
+
+# methode Display projects centraux
+
+def normalise_data_central(process_data)
+  data_projects = process_data.to_h
+
+  # Initialisation des structures de données
+  data_tracker = {
+    Contrat: {},
+    Contrat_gre: {},
+    Acquisition: {},
+    Acquisition_realisation: {}
+  }
+
+   data_projects.each do |key, value|
+    case key
+    when :Contrat
+      data_tracker[:Contrat] = {
+        prevu: value.dig(:prevue, :nbr).to_i,
+        non_entamer: value.dig(:non_entamer, :nbr).to_i,
+        etude_en_cours: value.dig(:etude_en_cours, :nbr).to_i,
+        etude_finalise: value.dig(:etude_finalise, :nbr).to_i,
+        commission_cdc: value.dig(:preparation_site, :nbr).to_i,
+        etablissement_cdc: value.dig(:site_valider, :nbr).to_i,
+        cdc_approuve: value.dig(:demande_valider, :nbr).to_i,
+        phase_consultation: value.dig(:consultation, :nbr).to_i,
+        visa_ccm_accordee: value.dig(:demande_installation, :nbr).to_i,
+        en_negociation: value.dig(:prestation_engager, :nbr).to_i,
+        contrat_notifie: value.dig(:prestation_execution, :nbr).to_i
+
+      
+      }
+    when :Contrat_gre
+      data_tracker[:Contrat_gre] = {
+         prevu: value.dig(:prevue, :nbr).to_i,
+        non_entamer: value.dig(:non_entamer, :nbr).to_i,
+        etude_en_cours: value.dig(:etude_en_cours, :nbr).to_i,
+        etude_finalise: value.dig(:etude_finalise, :nbr).to_i,
+        commission_gre_a_gre:  value.dig(:preparation_site, :nbr).to_i,
+        etablissement_cdc: value.dig(:site_valider, :nbr).to_i,
+        gre_a_gre_approuve: value.dig(:demande_valider, :nbr).to_i,
+        phase_consultation: value.dig(:consultation, :nbr).to_i,
+        contrat_notifie: value.dig(:prestation_execution, :nbr).to_i}
+     
+    when :Acquisition
+      data_tracker[:Acquisition] =  {
+        prevu: value.dig(:prevue, :nbr).to_i,
+        non_entamer: value.dig(:non_entamer, :nbr).to_i,
+        en_progression: value.dig(:en_cours_pa, :nbr).to_i,
+        en_defficulter: value.dig(:en_cours_rar, :nbr).to_i,
+        en_preparation: value.dig(:mes, :nbr).to_i,
+        pret_au_lancement: value.dig(:engager, :nbr).to_i,
+        en_execution: value.dig(:demande_dotaion, :nbr).to_i,
+        receptionner: value.dig(:en_exploitation, :nbr).to_i,
+        montant_notifier: value.dig(:non_entamer, :consistance).to_d,
+        montant_engager: value.dig(:en_cours_pa, :consistance).to_d,
+        non_lancer: value.dig(:demande_installation, :consistance).to_i,
+        en_cours:  value.dig(:demande_valider, :consistance).to_i,
+        achever: value.dig(:doter, :consistance).to_i
+      }
+    when :Acquisition_realisation
+     
+   data_tracker[:Acquisition_realisation] = {
+  prevu: value.dig(:prevue, :nbr).to_i,
+  non_entamer: value.dig(:non_entamer, :nbr).to_i,
+  en_progression: value.dig(:en_cours_pa, :nbr).to_i,
+  en_defficulter: value.dig(:en_cours_rar, :nbr).to_i,
+
+  montant_notifier: value.dig(:non_entamer, :consistance).to_d,
+  montant_engager: value.dig(:en_cours_pa, :consistance).to_d,
+  non_lancer: value.dig(:demande_installation, :consistance).to_i,
+  en_cours:  value.dig(:demande_valider, :consistance).to_i,
+  achever: value.dig(:doter, :consistance).to_i,
+
+  # Partie BC (prefix bc_)
+  bc_en_preparation: value.dig(:mes, :nbr).to_i,
+  bc_pret_au_lancement: value.dig(:engager, :nbr).to_i,
+  bc_en_execution: value.dig(:demande_dotaion, :nbr).to_i,
+  bc_receptionner: value.dig(:en_exploitation, :nbr).to_i,
+  bc_achever: value.dig(:prestation_achever, :nbr).to_i,
+
+  # Partie Prestation (prefix prestation_)
+  prestation_en_preparation: value.dig(:prestation_preparation, :nbr).to_i,
+  prestation_pret_au_lancement: value.dig(:prestation_engager, :nbr).to_i,
+  prestation_en_execution: value.dig(:prestation_execution, :nbr).to_i,
+  prestation_receptionner: value.dig(:en_exploitation, :nbr).to_i,
+  prestation_achever: value.dig(:prestation_achever, :nbr).to_i
+
   
+} 
+ 
+      end
+  end
+
+  
+
+   return data_tracker
+end
+
+
+
+def query_link(key, sup_hash, sub_key, project)
+    # Table de correspondance pour tracker_id
+    tracker_ids = {
+      Contrat: 14,
+      Contrat_gre: 72,
+      Acquisition: 21,
+      Acquisition_realisation: {
+        default: 68,
+        bc_: 69,
+        prestation_: 71
+      }
+
+    }
+  
+    # Table de correspondance pour query_id
+    query_ids = {
+      Contrat: {
+        prevu: nil, non_entamer: 2007, etude_en_cours: 2006,
+        etude_finalise: 2006, commission_cdc: 2008, etablissement_cdc: 2009,
+        cdc_approuve: 2010, phase_consultation: 2011, visa_ccm_accordee: 2012
+      },
+      Contrat_gre: {
+        prevu: 1995, non_entamer: 1995, etude_en_cours: nil,
+        etude_finalise: nil, commission_cdc: nil, etablissement_cdc: nil,
+        cdc_approuve: nil, phase_consultation: nil, ontrat_notifie: nil
+      },
+      Acquisition: {
+        prevu: 1995, non_entamer: 1995, en_progression: 1995,
+        en_defficulter: nil, en_preparation: nil, pret_au_lancement: nil,
+        en_execution: nil, receptionner: nil
+      },
+      Acquisition_realisation: {
+        prevu: 1995, non_entamer: 1995, en_progression: 1995, en_defficulter: 100,
+        bc_en_preparation: 1995, bc_pret_au_lancement: nil, bc_en_execution: nil, bc_receptionner: nil,
+        prestation_en_preparation: 1995, prestation_pret_au_lancement: nil, prestation_en_execution: nil, prestation_achever: nil
+      }
+    }
+  
+    # Détermination du tracker_id
+    tracker_id = case key
+                 when :Acquisition_realisation
+                   prefix = sub_key.to_s[/^bc_|^prestation_/] # Récupère 'bc_' ou 'prestation_' si présent
+                 
+                 tracker_ids[:Acquisition_realisation].fetch(prefix&.to_sym, tracker_ids[:Acquisition_realisation][:default])
+
+                 else
+                   tracker_ids[key]
+                 end
+  
+    # Détermination du query_id
+    query_id = query_ids.dig(key, sub_key)
+  
+    # Génération du lien
+    link_to sup_hash[sub_key].to_i,
+            project_issues_path(project, query_id ? { query_id: query_id } : { set_filter: 1, tracker_id: tracker_id }),
+            class: "objectf-cell", target: "_blank"
+  end
+# methode Display projects centraux
+ 
+
+
+  def display_contrat(process_data, project)
+    result_data = normalise_data_central(process_data).deep_dup
+    table_content = "".html_safe
+ 
+# Définition des colonnes avec leurs classes CSS associées
+         sub_headers = [
+  { key: :prevu, label: "Prévu", class: "objectf" },
+  { key: :non_entamer, label: "Non entamé", class: "non-entamer" },
+  { key: :etude_en_cours, label: "Étude en cours", class: "etude-en-cours" },
+  { key: :etude_finalise, label: "Étude finalisée", class: "etude-finalise" },
+  { key: :commission_cdc, label: "Commission CDC", class: "en-consultation" },
+  { key: :etablissement_cdc, label: "Établissement CDC", class: "engagees" },
+  { key: :cdc_approuve, label: "CDC approuvé", class: "realisees-pa" },
+  { key: :phase_consultation, label: "Phase consultation", class: "realisees-pa" },
+  { key: :visa_ccm_accordee, label: "VISA CCM accordée", class: "realisees-pa" },
+  { key: :en_negociation, label: "En optimisation", class: "realisees-pa" },
+  { key: :contrat_notifie, label: "Contrat notifiée", class: "realisees-pa" }]
+       
+         # Ajouter le THEAD avec les labels
+    table_content += content_tag(:thead) do
+      content_tag(:tr) do
+        concat(content_tag(:th, "Prévisions", class: "Previsions", colspan: 2))
+        concat(content_tag(:th, "Phase étude", class: "Previsions", colspan: 3))
+        concat(content_tag(:th, "Phase CDC", class: "phase-etude", colspan: 3))
+        concat(content_tag(:th, "Phase Administrative", class: "etat-realisation", colspan: 2))
+        concat(content_tag(:th, "Sous action", class: "sous-action", rowspan: 2))
+        concat(content_tag(:th, "Phase optimisation", class: "etat-realisation", colspan: 2))
+
+      end +
+      content_tag(:tr) do
+        row_content = "".html_safe
+        row_content += content_tag(:th, "Action", class: "action")
+        
+        
+  
+        # Génération automatique des colonnes
+        sub_headers.each_with_index do |header, index|
+          
+          row_content += content_tag(:th, header[:label], class: header[:class])
+        end
+  
+        row_content
+      end
+    end
+  
+    # Ajouter le TBODY avec les données
+    table_content += content_tag(:tbody) do
+      result_data.select { |key| key == :Contrat }.each_with_index.map do |(key, sub_hash), index|
+        content_tag(:tr, class: index.even? ? 'even' : 'odd') do
+          row_content = "".html_safe
+          row_content += content_tag(:td, key.to_s, class: "action-cell", style: "text-align: left;")
+  
+          # Génération des cellules dynamiquement en utilisant sub_headers
+          sub_headers.each_with_index do |header, index|
+            row_content += content_tag(:td, "Négociation", class: "sous-action") if index == 9
+            row_content += content_tag(:td, query_link(key, sub_hash, header[:key], project), class: "#{header[:class]}-cell")
+          end
+  
+          row_content
+        end
+      end.join.html_safe
+    end
+  
+    # Ajout des données sous forme JSON pour un usage en JavaScript
+    chart_data_json = result_data.to_json
+    table_content += content_tag(:div, chart_data_json.html_safe, id: "chart-data", style: "display: none;")
+  
+    table_content
+  end
+   # Partie gré a gré 
+  def display_contrat_gre(process_data, project)
+    result_data = normalise_data_central(process_data).deep_dup
+    table_content = "".html_safe
+ 
+# Définition des colonnes avec leurs classes CSS associées
+         sub_headers = [
+  { key: :prevu, label: "Prévu", class: "objectf" },
+  { key: :non_entamer, label: "Non entamé", class: "non-entamer" },
+  { key: :etude_en_cours, label: "Étude en cours", class: "etude-en-cours" },
+  { key: :etude_finalise, label: "Étude finalisée", class: "etude-finalise" },
+  { key: :commission_gre_a_gre, label: "Commission gré à gré", class: "en-consultation" },
+  { key: :gre_a_gre_approuve, label: "Gré à gré approuvé", class: "realisees-pa" },
+  { key: :etablissement_cdc, label: "Établissement CPT", class: "engagees" },
+  { key: :phase_consultation, label: "Phase consultation", class: "realisees-pa" },
+   { key: :contrat_notifie, label: "Contrat notifiée", class: "realisees-pa" }]  
+         # Ajouter le THEAD avec les labels
+    table_content += content_tag(:thead) do
+      content_tag(:tr) do
+        concat(content_tag(:th, "Prévisions", class: "Previsions", colspan: 2))
+        concat(content_tag(:th, "Phase étude", class: "Previsions", colspan: 3))
+        concat(content_tag(:th, "Phase CPT", class: "phase-etude", colspan: 3))
+        concat(content_tag(:th, "Phase Administrative", class: "etat-realisation", colspan: 2))
+       
+      end +
+      content_tag(:tr) do
+        row_content = "".html_safe
+        row_content += content_tag(:th, "Action", class: "action")
+        
+        
+  
+        # Génération automatique des colonnes
+        sub_headers.each_with_index do |header, index|
+          
+          row_content += content_tag(:th, header[:label], class: header[:class])
+        end
+  
+        row_content
+      end
+    end
+  
+    # Ajouter le TBODY avec les données
+    table_content += content_tag(:tbody) do
+      result_data.select { |key| key == :Contrat_gre }.each_with_index.map do |(key, sub_hash), index|
+        content_tag(:tr, class: index.even? ? 'even' : 'odd') do
+          row_content = "".html_safe
+          row_content += content_tag(:td, key.to_s, class: "action-cell", style: "text-align: left;")
+  
+          # Génération des cellules dynamiquement en utilisant sub_headers
+          sub_headers.each_with_index do |header, index|
+            row_content += content_tag(:td, query_link(key, sub_hash, header[:key], project), class: "#{header[:class]}-cell")
+          end
+  
+          row_content
+        end
+      end.join.html_safe
+    end
+  
+    # Ajout des données sous forme JSON pour un usage en JavaScript
+  
+    table_content
+  end
+
+    
+  # partie acquisition
+  def display_acquisition(process_data, project)  # methode affichage tableau contrat 
+    result_data = normalise_data_central(process_data).deep_dup
+    table_content = "".html_safe
+ 
+# Définition des colonnes avec leurs classes CSS associées
+sub_headers = [
+  { key: :prevu, label: "Prévu", class: "objectf" },
+  { key: :non_entamer, label: "Non entamé", class: "non-entamer" },
+  { key: :en_progression, label: "En progression", class: "etude-en-cours" },
+  { key: :en_defficulter, label: "En difficulté", class: "etude-finalise" },
+  { key: :en_preparation, label: "En préparation", class: "en-consultation" },
+  { key: :pret_au_lancement, label: "Prêt au lancement", class: "engagees" },
+  { key: :en_execution, label: "En exécution", class: "realisees-pa" },
+  { key: :receptionner, label: "Réceptionné", class: "realisees-pa" }
+]
+
+    # Ajouter le THEAD avec les labels
+    table_content += content_tag(:thead) do
+      content_tag(:tr) do
+        concat(content_tag(:th, "Prévisions", class: "Previsions", colspan: 2))
+        concat(content_tag(:th, "Action Acquisition", class: "Previsions", colspan: 3))
+        concat(content_tag(:th, "Sous action", class: "sous-action", rowspan: 2))
+        concat(content_tag(:th, "Action BC/Lot", class: "bc_lot", colspan: 4))
+        
+      end +
+      content_tag(:tr) do
+        row_content = "".html_safe
+        row_content += content_tag(:th, "Action", class: "action")
+        
+        
+  
+        # Génération automatique des colonnes
+        sub_headers.each do |header|
+          row_content += content_tag(:th, header[:label], class: header[:class])
+        end
+  
+        row_content
+      end
+    end
+  
+    # Ajouter le TBODY avec les données
+    table_content += content_tag(:tbody) do
+      result_data.select { |key| key == :Acquisition }.each_with_index.map do |(key, sub_hash), index|
+        content_tag(:tr, class: index.even? ? 'even' : 'odd') do
+          row_content = "".html_safe
+          row_content += content_tag(:td, key.to_s, class: "action-cell", style: "text-align: left;")
+          
+          # Génération des cellules dynamiquement en utilisant sub_headers
+          sub_headers.each_with_index do |header, index|
+            
+            row_content += content_tag(:td, "BC/Lot", class: "sous-action") if index == 4
+            row_content += content_tag(:td, query_link(key, sub_hash, header[:key], project), class: "#{header[:class]}-cell")
+          end
+  
+          row_content
+        end
+      end.join.html_safe
+    end
+
+    table_content
+  end   
+
+  
+ 
+   def display_acquisition_realisation(process_data, project)
+  result_data = normalise_data_central(process_data).deep_dup
+  table_content = "".html_safe
+
+  sub_headers = [
+     { label: "", class: "prevu" },
+    { label: "Prévu", class: "prevu" },
+    { label: "Non entamé", class: "non_entame" },
+    { label: "En progression", class: "en_progression" },
+    { label: "En difficulté", class: "en_difficulte" },
+    { label: "En préparation", class: "en_preparation" },
+    { label: "Prêt au lancement", class: "pret_au_lancement" },
+    { label: "En exécution", class: "en_execution" },
+    { label: "Réceptionné", class: "receptionne" },
+    { label: "Achevé", class: "achever" }
+  ]
+
+  table_content += content_tag(:thead) do
+    content_tag(:tr) do
+      concat(content_tag(:th, "Action parente", class: "action-parente", colspan: 2))
+      concat(content_tag(:th, "Statut parente", class: "statut-parente", colspan: 3))
+      concat(content_tag(:th, "Sous action", class: "sous-action", rowspan: 2))
+      concat(content_tag(:th, "Statut sous action", class: "statut-sous-action", colspan: 5))
+    end +
+    content_tag(:tr) do
+      sub_headers.map { |header| content_tag(:th, header[:label], class: header[:class]) }.join.html_safe
+    end
+  end
+
+  table_content += content_tag(:tbody) do
+    result_data.select { |key| key == :Acquisition_realisation }.map.with_index do |(key, sub_hash), index|
+      row_class = index.even? ? 'even' : 'odd'
+      
+      # Première ligne avec action principale et BC/Lot
+      content_tag(:tr, class: row_class) do
+        row = "".html_safe
+        row += content_tag(:td, key.to_s, rowspan: 2, class: "action-main")
+        row += [:prevu, :non_entamer, :en_progression, :en_difficulte].map do |status|
+          content_tag(:td, query_link(key, sub_hash, status, project), rowspan: 2, class: status.to_s)
+        end.join.html_safe
+        
+        row += content_tag(:td, "BC/Lot", class: "sous_action")
+        row += [:bc_en_preparation, :bc_pret_au_lancement, :bc_en_execution, :bc_receptionner].map do |status|
+          content_tag(:td, query_link(key, sub_hash, status, project), class: status.to_s)
+        end.join.html_safe
+        row += content_tag(:td, "", class: "achever", style: "background-color: #d3d3d3;")
+        row
+      end +
+      
+      # Deuxième ligne avec Prestation
+      content_tag(:tr, class: row_class) do
+        row = "".html_safe
+        row += content_tag(:td, "Prestation", class: "sous_action")
+        row += [:prestation_en_preparation, :prestation_pret_au_lancement, :prestation_en_execution].map do |status|
+          content_tag(:td, query_link(key, sub_hash, status, project), class: status.to_s)
+        end.join.html_safe
+        row += content_tag(:td, "", class: "receptionne", style: "background-color: #d3d3d3;")
+        row += content_tag(:td, query_link(key, sub_hash, :prestation_receptionner, project), class: "receptionne")
+        row
+      end
+    end.join.html_safe
+  end
+
+  content_tag(:table, table_content, class: "custom-table")
+end
+ 
+  
+
+
+
+
+def display_report_central(process_data, trackers, project)
+  # Ajouter une ligne pour "Réseau ODN" au début de la table
+  table_content = "".html_safe
+
+  # Ajouter la partie THEAD
+  table_content += content_tag(:thead) do
+    content_tag(:tr) do
+      concat(content_tag(:th, "Previsions", class: "Previsions", colspan: 2))
+      concat(content_tag(:th, "Phase étude", class: "Previsions", colspan: 3)) if trackers.include?(14)
+      concat(content_tag(:th, "Phase CDC", class: "phase-etude", colspan: 3)) if trackers.include?(14)
+      concat(content_tag(:th, "Phase Contrat", class: "etat-realisation", colspan: 2)) if trackers.include?(14)
+      concat(content_tag(:th, "Action acquisition", class: "etat-realisation", colspan: 2)) if (trackers & [21, 68]).any?
+      concat(content_tag(:th, "Suivi BC/Lot", class: "etat-realisation", colspan: 4)) if (trackers & [21, 68]).any?
+    end +
+    content_tag(:tr) do
+      row_content = "".html_safe
+      row_content += content_tag(:th, "Action", class: "action")
+      row_content += content_tag(:th, "Nbr actions", class: "objectf")
+      row_content += content_tag(:th, "Non Entamer", class: "non-entamer")
+      row_content += content_tag(:th, "En execution", class: "non-entamer") if (trackers & [21, 68]).any?
+      row_content += content_tag(:th, "Etude en cours", class: "etude-en-cours") if trackers.include?(14)
+      row_content += content_tag(:th, "Etude finalisée", class: "etude-finalise") if trackers.include?(14)
+      row_content += content_tag(:th, "En préparation", class: "engagees") if (trackers & [21, 68]).any?
+      row_content += content_tag(:th, "prét au lancement", class: "engagees") if (trackers & [21, 68]).any?
+      row_content += content_tag(:th, "En execution", class: "engagees") if (trackers & [21, 68]).any?
+      row_content += content_tag(:th, "Réceptioné", class: "engagees") if (trackers & [21, 68]).any?
+      row_content += content_tag(:th, "Commision CDC", class: "en-consultation") if trackers.include?(14)
+      row_content += content_tag(:th, "Etablissement CDC", class: "engagees") if trackers.include?(14)
+      row_content += content_tag(:th, "CDC approuvé", class: "en-cours-pa") if trackers.include?(14)
+      row_content += content_tag(:th, "Phase consultation", class: "realisees-pa") if trackers.include?(14)
+      row_content += content_tag(:th, "Contrat notifié", class: "realisees-pa") if trackers.include?(14)
+      row_content
+    end
+  end
+
+  # Ajouter les données du TBody
+  process_data.select { |_, value| trackers.include?(value[:tracker_id].to_i) }
+              .each_with_index do |(key, value), index|
+    table_content += content_tag(:tbody) do
+      content_tag(:tr, class: index.even? ? 'even' : 'odd') do
+        row_content = "".html_safe
+        row_content += content_tag(:td, key.to_s, class: "action-cell", style: "text-align: left;")
+        row_content += content_tag(:td, display_data_v(key, value, :prevue, project), class: "objectf-cell")
+        row_content += content_tag(:td, display_data_v(key, value, :non_entamer, project), class: "non-entamer-cell")
+        row_content += content_tag(:td, display_data_v(key, value, :installer, project), class: "realisees-rar-cell") if (trackers & [21, 68]).any?
+        row_content += content_tag(:td, display_data_v(key, value, :etude_en_cours, project), class: "etude-en-cours-cell") if trackers.include?(14)
+        row_content += content_tag(:td, display_data_v(key, value, :etude_finalise, project), class: "etude-finalise-cell") if trackers.include?(14)
+        row_content += content_tag(:td, display_data_v(key, value, :mes, project), class: "arret-cell") if (trackers & [21, 68]).any?
+        row_content += content_tag(:td, display_data_v(key, value, :engager, project), class: "engagees-cell") if (trackers & [21, 68]).any?
+        row_content += content_tag(:td, display_data_v(key, value, :demande_dotaion, project), class: "en-cours-pa-cell") if (trackers & [21, 68]).any?
+        row_content += content_tag(:td, display_data_v(key, value, :en_exploitation, project), class: "cloture-cell") if (trackers & [21, 68]).any?
+        row_content += content_tag(:td, display_data_v(key, value, :preparation_site, project), class: "en-consultation-cell") if trackers.include?(14)
+        row_content += content_tag(:td, display_data_v(key, value, :site_valider, project), class: "engagees-cell") if trackers.include?(14)
+        row_content += content_tag(:td, display_data_v(key, value, :demande_valider, project), class: "realisees-pa-cell") if trackers.include?(14)
+        row_content += content_tag(:td, display_data_v(key, value, :consultation, project), class: "en-consultation-cell") if trackers.include?(14)
+        row_content += content_tag(:td, display_data_v(key, value, :demande_installation, project), class: "realisees-pa-cell") if trackers.include?(14)
+        row_content
+      end
+    end
+  end
+
+  table_content
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   #  Display par DOT***************************************
   
  def display_process_dot(process_data_dot)
@@ -388,7 +1031,7 @@ process_data_dot.each_with_index.map do |(key, value), index|
         content_tag(:td, display_data_dot(value[:ODN_Dev],:en_cours_rar), class: "en-cours-rar-cell",id: "dot_4") +
         content_tag(:td, display_data_dot(value[:ODN_Dev],:realiser_pa), class: "realisees-pa-cell",id: "dot_5") +
         content_tag(:td, display_data_dot(value[:ODN_Dev],:realiser_rar), class: "realisees-rar-cell",id: "dot_6") +
-        content_tag(:td, display_data_dot(value[:ODN_Dev],:total), class: "total-cell",id: "col-7",id: "dot_7") +
+        content_tag(:td, display_data_dot(value[:ODN_Dev],:total), class: "total-cell",id: "dot_7") +
         content_tag(:td, display_data_dot(value[:ODN_Mod],:prevue), class: "objectf-cell",id: "dot_8") +
         content_tag(:td, progress_bar_dot(display_data_dot(value[:ODN_Mod], :etude_finalise)).html_safe, class: "etude-finalise-cell",id: "dot_9") +
         content_tag(:td, display_data_dot(value[:ODN_Mod],:en_cours_pa), class: "en-cours-pa-cell",id: "dot_10") +
@@ -408,17 +1051,18 @@ end
 
 
 
-def display_racc_data(data_objectif,data_realiser,type)
+
+def display_racc_data(data,type)
    if type == :objectif_racc
-        return  "#{number_with_delimiter(data_objectif[0],delimiter: " ", separator: ",")} - #{number_with_delimiter(data_objectif[1],delimiter: " ", separator: ",")}"
+     return  "#{number_with_delimiter(data[0],delimiter: " ", separator: ",")} (#{number_to_percentage(data[1], precision: 0)})"
+ 
    elsif type == :realiser_racc
-       return "#{number_with_delimiter(data_realiser[0],delimiter: " ", separator: ",")} - #{number_with_delimiter(data_realiser[1],delimiter: " ", separator: ",")}"
+        return  "#{number_with_delimiter(data[2],delimiter: " ", separator: ",")}  (#{number_to_percentage(data[3], precision: 1)})"
 
     #{(data_objectif[0].to_i == 0 ? 0 : (data_realiser[0] / data_objectif[0]) * 100).to_i}%- #{number_with_delimiter(data_realiser[1],delimiter: " ", separator: ",")} #{(data_objectif[1].to_i == 0 ? 0 : (data_realiser[1] / data_objectif[1]) * 100).to_i}%"
    end  
 
 end
-
 
   private
   def progress_bar_dot(value)
@@ -450,67 +1094,75 @@ end
   def dot_name(key)
   project = Project.find(key.to_i)
    dot_name = { 
-   276 => "Adrar",
-   278 => "Aïn Defla",
-   279 =>  "In Salah",
-   280 =>  "Aïn Témouchent",
-   281 =>  "Alger centre",
-   282 =>  "Alger est",
-   283 =>  "Alger ouest",
-   284 =>  "Annaba",
-   285 =>  "B.B.A",
-   287 =>  "B.B.M",
-   288 =>  "Batna",
-   289 =>  "Béchar",
-   290 =>  "Béjaïa",
-   291 =>  "Béni Abbès",
-   292 =>  "Biskra",
-   293 =>  "Blida",
-   294 =>  "Bouira",
-   295 =>  "Boumerdès",
-   296 =>  "Chlef",
-   297 =>  "Constantine",
-   298 =>  "Djanet",
-   299 =>  "Djelfa",
-   300 =>  "El Bayadh",
-   301 =>  "El Meniaa",
-   302 =>  "El M'Ghair",
-   303 =>  "El Oued",
-   304 =>  "El Tarf",
-   305 =>  "Ghardaïa",
-   306 =>  "Guelma",
-   307 =>  "Illizi",
-   308 =>  "In Guezzam",
-   309 =>  "Jijel",
-   310 =>  "Khenchela",
-   311 =>  "Laghouat",
-   312 =>  "M'Sila",
-   313 =>  "Mascara",
-   314 =>  "Médéa",
-   315 =>  "Mila",
-   316 =>  "Mostaganem",
-   317 =>  "Naâma",
-   318 =>  "O.E.B",
-   319 =>  "Oran",
-   320 =>  "Ouargla",
-   321 =>  "Ouled Djellal",
-   322 =>  "Relizane",
-   323 =>  "S.B.A",
-   324 =>  "Saïda",
-   325 =>  "Sétif",
-   326 =>  "Skikda",
-   327 =>  "Souk Ahras",
-   328 =>  "Tamanrasset",
-   329 =>  "Tébessa",
-   330 =>  "Tiaret",
-   331 =>  "Tindouf",
-   332 =>  "Timimoun",
-   333 =>  "Tipaza",
-   334 =>  "Tissemsilt",
-   335 =>  "Tizi Ouzou",
-   336 =>  "Tlemcen",
-   337 =>  "Touggourt" }
-   
+    276 => "Adrar",278 => "Aïn Defla",279 =>  "In Salah",280 =>  "Aïn Témouchent",281 =>  "Alger centre",282 =>  "Alger est",283 =>  "Alger ouest",284 =>  "Annaba",285 =>  "B.B.A",
+      287 =>  "B.B.M",288 =>  "Batna",289 =>  "Béchar",290 =>  "Béjaïa",291 =>  "Béni Abbès",292 =>  "Biskra",293 =>  "Blida",294 =>  "Bouira",295 =>  "Boumerdès",296 =>  "Chlef",297 =>  "Constantine",
+      298 =>  "Djanet",299 =>  "Djelfa", 300 =>  "El Bayadh",301 =>  "El Meniaa",302 =>  "El M'Ghair",303 =>  "El Oued",304 =>  "El Tarf",305 =>  "Ghardaïa",306 =>  "Guelma",307 =>  "Illizi",
+      308 =>  "In Guezzam",309 =>  "Jijel",310 =>  "Khenchela",311 =>  "Laghouat",312 =>  "M'Sila",313 =>  "Mascara",314 =>  "Médéa",315 =>  "Mila",316 =>  "Mostaganem",317 =>  "Naâma",318 =>  "O.E.B",
+      319 =>  "Oran",320 =>  "Ouargla",321 =>  "Ouled Djellal",322 =>  "Relizane",323 =>  "S.B.A",324 =>  "Saïda",325 =>  "Sétif",326 =>  "Skikda",327 =>  "Souk Ahras",328 =>  "Tamanrasset",
+      329 =>  "Tébessa",330 =>  "Tiaret",331 =>  "Tindouf",332 =>  "Timimoun",333 =>  "Tipaza",334 =>  "Tissemsilt",335 =>  "Tizi Ouzou",336 =>  "Tlemcen",337 =>  "Touggourt" ,
+      343 => "Adrar",344 => "Aïn Defla",345 => "Aïn Témouchent",346 => "Alger centre",347 => "Alger est",348 => "Alger ouest",349 => "Annaba",350 => "B.B.A",351 => "B.B.M",352 => "Batna",
+      353 => "Béchar",354 => "Béjaïa",355 => "Béni Abbès",356 => "Biskra",357 => "Blida",358 => "Bouira",360 => "Boumerdès",361 => "Chlef",362 => "Constantine",363 => "Djanet",364 => "Djelfa",
+      365 => "El Bayadh",366 => "El M'Ghair",367 => "El Meniaa",368 => "El Oued",369 => "El Tarf",370 => "Ghardaïa",371 => "Guelma",372 => "Illizi",373 => "In Guezzam",374 => "In Salah",375 => "Jijel",
+      376 => "Khenchela",377 => "Laghouat",378 => "M'Sila",379 => "Mascara",380 => "Médéa",381 => "Mila",382 => "Mostaganem",383 => "Naâma",384 => "O.E.B",385 => "Oran",386 => "Ouargla",387 => "Ouled Djellal",
+      388 => "Relizane",389 => "S.B.A",390 => "Saïda",391 => "Sétif",392 => "Skikda",393 => "Souk Ahras",394 => "Tamanrasset",395 => "Tébessa",396 => "Tiaret",397 => "Timimoun",398 => "Tindouf",399 => "Tipaza",
+      400 => "Tissemsilt",401 => "Tizi Ouzou",402 => "Tlemcen",403 => "Touggourt",405 => "Adrar",
+  406 => "Ain Defla",407 => "Ain Témouchent",408 => "Alger centre",
+  409 => "Alger est",
+  410 => "Alger ouest",
+  411 => "Annaba",
+  412 => "B.B.A",
+  413 => "B.B.M",
+  414 => "Batna",
+  415 => "Béchar",
+  416 => "Béjaia",
+  417 => "Béni Abbas",
+  418 => "Biskra",
+  419 => "Blida",
+  420 => "Bouira",
+  421 => "Boumerdés",
+  422 => "Chlef",
+  423 => "Constantine",
+  424 => "Djanet",
+  425 => "Djelfa",
+  426 => "El Bayadh",
+  427 => "El M'Ghair",
+  428 => "El Meniaa",
+  429 => "El Oued",
+  430 => "El Tarf",
+  431 => "Ghardaia",
+  432 => "Guelma",
+  433 => "Illizi",
+  434 => "In Guezzam",
+  435 => "In Salah",
+  436 => "Jijel",
+  437 => "Khenchela",
+  438 => "Laghouat",
+  439 => "M'sila",
+  440 => "Mascara",
+  441 => "Médéa",
+  442 => "Mila",
+  443 => "Mostaganem",
+  444 => "Naâma",
+  445 => "O.E.B",
+  446 => "Oran",
+  447 => "Ouargla",
+  448 => "Ouled Djellal",
+  449 => "Relizane",
+  450 => "S.B.A",
+  451 => "Saïda",
+  452 => "Sétif",
+  453 => "Skikda",
+  454 => "Souk Ahras",
+  455 => "Tamanrasset",
+  456 => "Tébessa",
+  457 => "Tiaret",
+  458 => "Timimoun",
+  459 => "Tindouf",
+  460 => "Tipaza",
+  461 => "Tissemsilt",
+  462 => "Tizi Ouzou",
+  463 => "Tlemcen",
+  464 => "Touggourt"}
    if project
 
      return link_to dot_name[key.to_i],project_path(project),target: "_blank"
@@ -612,20 +1264,42 @@ end
         :realiser_pa => 1455,
         :realiser_rar => 1456,
         :arret_global => 1457,
-        :cloturer => 1458
+        :cloturer => 1458},
 
+      "PA_Mod" => {
+         :prevue => 1527,
+        :non_entamer => 1793,
+        :etude_en_cours => 1792,
+        :etude_finalise => 1530,
+        :consultation => 1532 },
 
-       }
+        "PA_Dev" => {
+         :prevue => 1804,
+        :non_entamer => 1546,
+        :etude_en_cours => 1549,
+        :etude_finalise => 1550,
+        :consultation => 1552, 
+        :engager => 2158},
+
+        "PA_FO" => {
+         :prevue => 1822,
+        :non_entamer => 1823,
+        :etude_finalise => 1824,
+        :consultation => 1825 }
+
 
     }
   
     query_value = query_key.dig(key, value_key)
   
     content = case key
-              when :ODN_Dev,:ODN_Mod
+              when :ODN_Dev,:ODN_Mod,"PA_Mod","PA_Dev"
+
                 "#{number_with_delimiter(value[value_key][:nbr].to_i,delimiter: " ", separator: ",")} - #{number_with_delimiter(value[value_key][:consistance].to_i,delimiter: " ", separator: ",")}"
-              when :Canalisation,:Pose_fo
+              when :Canalisation,:Pose_fo, "PA_FO"
                 "#{number_with_delimiter(value[value_key][:nbr].to_i,delimiter: " ", separator: ",")} - #{number_with_delimiter(number_with_precision(value[value_key][:consistance].to_d, precision: 2), delimiter: " ", separator: ",")}"
+              
+                           
               else
                 "#{number_with_delimiter(value[value_key][:nbr].to_i,delimiter: " ", separator: ",")}"
               end
@@ -636,7 +1310,7 @@ end
        if value_key == :prevue
          return link_to content ,project_issues_path(project, :set_filter => 1, :tracker_id => value[:tracker_id]),target: "_blank"
        else
-          return content
+            return content
        end
    
     end

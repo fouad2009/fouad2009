@@ -694,6 +694,24 @@ module IssuesHelper
   # Issue history tabs
   def issue_history_tabs
     tabs = []
+
+    if [22,60,47,58,59].include?(@issue.tracker_id) 
+      tabs << 
+
+      {
+        :name => 'appros',
+        :label => :label_issue_history_appros,
+        :partial => 'issues/tabs/list_timlog',
+      }
+    end
+    if [10,29,47,58,59].include?(@issue.tracker_id) 
+      tabs <<
+      {
+        :name => 'maps',
+        :label => :label_issue_history_maps,
+        :partial => 'issues/tabs/maps'
+      }
+    end
     if @journals.present?
       has_details = @journals.any? {|value| value.details.present?}
       has_notes = @journals.any? {|value| value.notes.present?}

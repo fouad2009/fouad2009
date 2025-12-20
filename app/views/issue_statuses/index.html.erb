@@ -7,10 +7,13 @@
 
 <table class="list issue_statuses">
   <thead><tr>
-  <th><%=l(:field_status)%></th>
+      <th><%=l(:field_status)%></th>
+
   <% if Issue.use_status_for_done_ratio? %>
   <th><%=l(:field_done_ratio)%></th>
-  <% end %>
+<% end %>
+
+   <th> Status_id </th>
   <th><%=l(:field_is_closed)%></th>
   <th><%=l(:field_description)%></th>
   <th></th>
@@ -23,6 +26,9 @@
   <% if Issue.use_status_for_done_ratio? %>
   <td><%= status.default_done_ratio %></td>
   <% end %>
+ 
+<td><%= status.id %></td>
+
   <td><%= checked_image status.is_closed? %></td>
   <td class="description"><%= status.description %></td>
   <td>

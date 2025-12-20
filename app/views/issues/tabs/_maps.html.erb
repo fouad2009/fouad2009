@@ -1,0 +1,31 @@
+
+<input type="hidden" id="latitude" value="<%= @issue.custom_field_value(226) %>">
+<input type="hidden" id="longitude" value="<%= @issue.custom_field_value(227) %>">
+<input type="hidden" id="infos_action" value="<%= @issue.subject %>">
+<div id="map" style="height: 500px;" data-load-map="false"></div>
+
+
+<%= stylesheet_link_tag "leaflet.css" %>
+<%= javascript_include_tag "leaflet.js" %>
+<%= javascript_include_tag "esri-leaflet.js" %>
+<%= javascript_include_tag "display_map.js" %>
+<script>
+  $(document).ready(function() {
+    $('#map').on('click', function() {
+      var mapElement = $(this);
+      var loadMap = mapElement.data('load-map');
+
+      if (loadMap === false) {
+        // Utilisez setTimeout pour exécuter le code de chargement de la carte de manière asynchrone
+        setTimeout(function() {
+          let latitude = parseFloat($('#latitude').val());
+          let longitude = parseFloat($('#longitude').val());
+          let info = $('#infos_action').val();
+          displayMap('map','<div style="text-align: justify; font-size: 10px; white-space: pre-wrap;">' + info + '</div>', latitude, longitude);
+          mapElement.data('load-map', true); // Mettre à jour l'attribut data-load-map pour ne pas recharger la carte
+        }, 0);
+      }
+    });
+  });
+</script>
+

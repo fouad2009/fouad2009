@@ -1,16 +1,37 @@
-<div class="contextual">
-<%= link_to l(:button_edit), edit_issue_path(@issue),
-            :onclick => 'showAndScrollTo("update", "issue_notes"); return false;',
-            :class => 'icon icon-edit', :accesskey => accesskey(:edit) if @issue.editable? %>
-<%= link_to l(:button_log_time), new_issue_time_entry_path(@issue),
-            :class => 'icon icon-time-add' if User.current.allowed_to?(:log_time, @project) %>
+<div  class="contextual">
+    <%= link_to l(:button_edit), edit_issue_path(@issue), 
+    :onclick => 'showAndScrollTo("update", "issue_notes"); return false;',
+     :class => 'icon icon-edit', :accesskey => accesskey(:edit) if @issue.editable? %>
+      <%= link_to l(:button_log_time), new_issue_time_entry_path(@issue),
+       :class => 'icon icon-time-add' if User.current.admin? %>
 <%= watcher_link(@issue, User.current) %>
-<%= link_to l(:button_copy), project_copy_issue_path(@project, @issue),
-            :class => 'icon icon-copy' if User.current.allowed_to?(:copy_issues, @project) && Issue.allowed_target_projects.any? %>
-<%= actions_dropdown do %>
-  <%= copy_object_url_link(issue_url(@issue, only_path: false)) %>
-  <%= link_to l(:button_delete_object, object_name: l(:label_issue).downcase), issue_path(@issue),
-              :data => {:confirm => issues_destroy_confirmation_message(@issue)},
-              :method => :delete, :class => 'icon icon-del' if @issue.deletable? %>
+
+<% if [47,56,58,59].include?(@issue.tracker_id) && @issue.status_id !=1 && [2,3,4,5].include?(@issue.project.name.to_s[-1].to_i) %>
+    <%= link_to "Ajouter ODS", project_copy_issue_path(@project, @issue), :class => 'icon icon-add new-issue' if User.current.allowed_to?(:copy_issues, @project) && Issue.allowed_target_projects.any? %>
 <% end %>
+
+<% if [21,68].include?(@issue.tracker_id) && [1,5,6].include?(@issue.status_id)  && [54,55,57,58,59,60,62,63,64,65,67,68,154,465].include?(@issue.project_id.to_i) %>
+  
+  <%= link_to "Ajouter BC/Lot", project_copy_issue_path(@project, @issue, type_tracker: 69), :class => 'icon icon-add new-issue' if User.current.allowed_to?(:copy_issues, @project) && Issue.allowed_target_projects.any? %>
+ <%= link_to "Ajouter prestation", project_copy_issue_path(@project, @issue, type_tracker: 71), :class => 'icon icon-add new-issue' if User.current.allowed_to?(:copy_issues, @project) && Issue.allowed_target_projects.any? %>
+
+<% end %>
+
+
+
+<% if [14,70].include?(@issue.tracker_id) && [111].include?(@issue.status_id)  && [54,55,57,58,59,60,62,63,64,65,67,68,154,465].include?(@issue.project_id.to_i) %>
+
+ <%= link_to "Ajouter Négociation", new_project_issue_path(@project, parent_id: @issue.id.to_i, issue: {subject: @issue.subject, tracker_id: 72, assigned_to_id: @issue.assigned_to_id }), :class => 'icon icon-add new-issue' if User.current.allowed_to?(:add_issues, @project) &&  Issue.allowed_target_projects.any?  %>
+<% end %>
+
+
+
+<% if @issue.tracker_id == 29 %>
+<% if @issue.custom_field_value(224).to_i == 188 && [56,64,69].include?(@issue.status_id) %>
+<%= link_to "Ajouter OLT", project_copy_issue_path(@project, @issue), :class => 'icon icon-add new-issue' if User.current.allowed_to?(:copy_issues, @project) && Issue.allowed_target_projects.any? %>
+<% elsif @issue.custom_field_value(224).to_i == 187  %>
+<%= link_to "Ajouter Extension carte", project_copy_issue_path(@project, @issue), :class => 'icon icon-add new-issue' if User.current.allowed_to?(:add_issues, @project) && Issue.allowed_target_projects.any? %>
+<% end %>
+<% end %>
+<%= link_to l(:button_delete), issue_path(@issue), :data => {:confirm => issues_destroy_confirmation_message(@issue)}, :method => :delete, :class => 'icon icon-del' if @issue.deletable? %>
 </div>

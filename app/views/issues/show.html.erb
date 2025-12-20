@@ -124,6 +124,7 @@ end %>
 
 <div id="history">
 <%= render_tabs issue_history_tabs, issue_history_default_tab %>
+
 </div>
 
 <%= render partial: 'action_menu_edit' unless User.current.wants_comments_in_reverse_order? %>

@@ -9,8 +9,20 @@
 <%= form_tag(projects_path(@project, nil), :method => :get, :id => 'query_form') do %>
 <%= render :partial => 'queries/query_form' %>
 <% end %>
+<%= select_tag :query_project, 
+               options_for_select([
+                 ['DG-central', '1617'],
+                 ['DOT PA-2025', '1797'],
+                 ['DOT PA-2024', '1618'],
+                 ['DOT PA-2023', '1619'],
+                 ['DOT PA-2022', '1620'],
+                 ['DOT PA-2021', '1621'],
+                 ['DOT PA-2020', '1622'],
+                 ['DOT PA-2019', '1623']
+               ], include_blank: true), prompt: "Select structure" %>
 
-<% if @query.valid? %>
+
+<% if [1617,1618,1619,1620,1621,1622,1623,1797].include?(@query.id.to_i)  %>
   <% if @entries.empty? %>
     <p class="nodata"><%= l(:label_no_data) %></p>
   <% else %>
@@ -37,3 +49,22 @@
 <% end %>
 
 <% html_title(l(:label_project_plural)) -%>
+<%= javascript_tag do %>
+  document.addEventListener('DOMContentLoaded', function() {
+    var select = document.getElementById('query_project');
+    
+    // Écouter le changement de sélection dans la liste déroulante
+    select.addEventListener('change', function() {
+      var selectedValue = this.value; // Récupérer la valeur sélectionnée
+      
+      // Vérifier si la valeur sélectionnée est différente de la valeur par défaut
+      if (selectedValue !== '') {
+        // Générer l'URL en fonction de la valeur sélectionnée
+        var url = '/projects?query_id=' + selectedValue;
+        
+        // Rediriger vers l'URL générée
+        window.location.href = url;
+      }
+    });
+  });
+<% end %>

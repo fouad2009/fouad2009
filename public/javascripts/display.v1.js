@@ -129,69 +129,99 @@ for (const row of rows) {
 
 return etat; // Retourner le hash de hashes
 }
+const report = findRowWithValue(); // Supposons que cette fonction renvoie vos données.
 
 
-const report = findRowWithValue();
 
-google.charts.load('current', {'packages': ['corechart']});
+document.addEventListener("DOMContentLoaded", function() {
+    Chart.register(ChartDataLabels);
 
-google.charts.setOnLoadCallback(init);
-// Fonction qui dessine le graphique avec les données passées en paramètres.
-function drawChart(title, nonEntamees, enCours, finalisees, elementId) {
-  var data = google.visualization.arrayToDataTable([
-    ['Task', 'Value'],
-    ['Non entamée', nonEntamees],
-    ['En cours', enCours],
-    ['Finalisée', finalisees]
-  ]);
+    // Fonction qui dessine le graphique avec les données passées en paramètres.
+    function drawChart(title, nonEntamees, enCours, finalisees, elementId) {
+        const ctx = document.getElementById(elementId).getContext('2d');
 
-  var options = {
-    backgroundColor: 'transparent',
-    title: title,
-    titleTextStyle: {
-      fontSize: 11,
-      color:  'rgb(150, 148, 148)',
-      left: 20,
-      bold: true,
-     
-    },
-    pieHole: 0,
-    legend: {
-      position: 'bottom',
-      textStyle: {
-        fontSize: 9
-      }
-    },
-    
-    chartArea: {
-      width: '96%',
-      height: '80%'
-    },
-    pieSliceBorderColor: 'none',
-    pieSliceText: 'value-and-percentage',
-    colors: ['#DC3912','#FF9900',  '#66aa00'],
-    pieSliceTextStyle: {
-      color: 'white',
-      fontName: 'Arial',
-      fontSize: 10
-    },
-    sliceVisibilityThreshold: 0
-  };
+        const config = {
+            type: 'pie',
+            data: {
+                labels: ['Non entamée', 'En cours', 'Finalisée'],
+                datasets: [{
+                    data: [nonEntamees, enCours, finalisees],
+                    backgroundColor: ['#DC3912', '#FF9900', '#66aa00'],
+                    hoverBackgroundColor: ['#B22222', '#FFA500', '#32CD32'],
+                    borderWidth: 0 // Supprime la bordure autour des sections du pie
+                }]
+            },
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: title,
+                        color: 'rgb(150, 148, 148)',
+                        font: {
+                            size: 11,
+                            weight: 'bold'
+                        },
+                        padding: {
+                            top: 10,
+                            bottom: 10
+                        }
+                    },
+                    legend: {
+                        position: 'bottom',
+                        align: 'start',
+                        labels: {
+                            boxWidth: 10,
+                            boxHeight: 10,
+                            padding: 5,
+                            font: {
+                                size: 9
+                            }
+                        }
+                    },
+                    datalabels: {
+                        color: 'white',
+                        font: {
+                            size: 10,
+                            weight: 'bold'
+                        },
+                        formatter: (value, context) => {
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            if (value === 0 || total === 0) return ''; // Masque les valeurs si égales à 0
+                            const percentage = ((value / total) * 100).toFixed(1); // Calcule le pourcentage
+                            return `${percentage}%`; // Affiche uniquement le pourcentage
+                        }
+                    }
+                },
+                layout: {
+                    padding: 10
+                }
+            }
+        };
 
-  var chart = new google.visualization.PieChart(document.getElementById(elementId));
-  chart.draw(data, options);
-}
+        new Chart(ctx, config);
+    }
 
-// Fonction d'initialisation qui appelle drawChart avec les arguments souhaités.
-function init() {
-  
-  
-  // Dessine le premier graphique avec les données 'ODN Dev'.
-  drawChart('ODN Dev previsions & etude' , report['ODN_Dev']['NbrEtudeNonEntamer'], report['ODN_Dev']['NbrEtudeEnCours'], report['ODN_Dev']['NbrEtudeFinaliser'], 'myChart');
-  
-  // Dessine le deuxième graphique avec les données 'ODN Mod'.
-  drawChart('ODN Mod previsions & etude', report['ODN_Mod']['NbrEtudeNonEntamer'], report['ODN_Mod']['NbrEtudeEnCours'], report['ODN_Mod']['NbrEtudeFinaliser'], 'modChart');
-}
+    // Appel des fonctions pour dessiner les graphiques avec des données fictives.
+
+    drawChart(
+        'ODN Dev prévisions & étude',
+        report['ODN_Dev']['NbrEtudeNonEntamer'],
+        report['ODN_Dev']['NbrEtudeEnCours'],
+        report['ODN_Dev']['NbrEtudeFinaliser'],
+        'myChart'
+    );
+
+    drawChart(
+        'ODN Mod prévisions & étude',
+        report['ODN_Mod']['NbrEtudeNonEntamer'],
+        report['ODN_Mod']['NbrEtudeEnCours'],
+        report['ODN_Mod']['NbrEtudeFinaliser'],
+        'modChart'
+    );
+});
+
+
+
 function toggleFullScreen(element) {
   if (element.requestFullscreen) {
     element.requestFullscreen();

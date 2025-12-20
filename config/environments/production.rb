@@ -34,11 +34,11 @@ Rails.application.configure do
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for NGINX
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
+  # config.force_ssl = false
 
   # Prepend all log lines with the following tags.
   config.log_tags = [:request_id]
-
+  #config.force_ssl = true
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
 
@@ -87,6 +87,12 @@ Rails.application.configure do
   # config.active_record.database_selector = { delay: 2.seconds }
   # config.active_record.database_resolver = ActiveRecord::Middleware::DatabaseSelector::Resolver
   # config.active_record.database_resolver_context = ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
+  
+# Déplacer les logs hors de l'application
+config.paths['log'] = ['/opt/projects/log']
+config.logger = ActiveSupport::Logger.new(
+  File.join('/opt/projects/log', 'production.log')
+)
 
   # Disable delivery errors
   config.action_mailer.raise_delivery_errors = false

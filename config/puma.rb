@@ -40,7 +40,12 @@ state_path "#{application_path}/tmp/pids/puma.state"
 # (“append”) specifies whether the output is appended, the default is
 # “false”.
 #
-stdout_redirect "#{application_path}/log/puma.stdout.log", "#{application_path}/log/puma.stderr.log"
+stdout_redirect '/opt/projects/log/puma_stdout.log',
+                '/opt/projects/log/puma_stderr.log',
+                true
+
+
+#stdout_redirect "#{application_path}/log/puma.stdout.log", "#{application_path}/log/puma.stderr.log"
 # stdout_redirect '/u/apps/lolcat/log/stdout', '/u/apps/lolcat/log/stderr', true
 
 # Disable request logging.
@@ -53,7 +58,7 @@ stdout_redirect "#{application_path}/log/puma.stdout.log", "#{application_path}/
 # requests and “max” the maximum.
 #
 # The default is “0, 16”.
-workers 4
+workers 6
 threads 0,16
 
 # Bind the server to “url”. “tcp://”, “unix://” and “ssl://” are the only
@@ -61,7 +66,8 @@ threads 0,16
 #
 # The default is “tcp://0.0.0.0:9292”.
 #
- bind 'tcp://0.0.0.0:3000'
+ #bind 'tcp://0.0.0.0:80'
+port  ENV.fetch("PORT") { 3000 }
 #bind "unix://#{application_path}/tmp/sockets/redmine.socket"
 
 # Instead of “bind 'ssl://127.0.0.1:9292?key=path_to_key&cert=path_to_cert'” you

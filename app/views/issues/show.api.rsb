@@ -1,86 +1,55 @@
 api.issue do
-  api.id @issue.id
-  api.project(:id => @issue.project_id, :name => @issue.project.name) unless @issue.project.nil?
-  api.tracker(:id => @issue.tracker_id, :name => @issue.tracker.name) unless @issue.tracker.nil?
-  api.status(:id => @issue.status_id, :name => @issue.status.name, :is_closed => @issue.status.is_closed) unless @issue.status.nil?
-  api.priority(:id => @issue.priority_id, :name => @issue.priority.name) unless @issue.priority.nil?
-  api.author(:id => @issue.author_id, :name => @issue.author.name) unless @issue.author.nil?
-  api.assigned_to(:id => @issue.assigned_to_id, :name => @issue.assigned_to.name) unless @issue.assigned_to.nil?
-  api.category(:id => @issue.category_id, :name => @issue.category.name) unless @issue.category.nil?
-  api.fixed_version(:id => @issue.fixed_version_id, :name => @issue.fixed_version.name) unless @issue.fixed_version.nil?
-  api.parent(:id => @issue.parent_id) unless @issue.parent.nil?
+    api.id @issue.id
+    api.dot_name @issue.project&.name || "Unknown project"
+    api.action_name @issue.tracker&.name || "Unknown tracker"
+    api.status_name @issue.status&.name || "Unknown status"
 
-  api.subject @issue.subject
-  api.description @issue.description
-  api.start_date @issue.start_date
-  api.due_date @issue.due_date
-  api.done_ratio @issue.done_ratio
-  api.is_private @issue.is_private
-  api.estimated_hours @issue.estimated_hours
-  api.total_estimated_hours @issue.total_estimated_hours
-  if User.current.allowed_to?(:view_time_entries, @project)
-    api.spent_hours(@issue.spent_hours)
-    api.total_spent_hours(@issue.total_spent_hours)
+    # Check if the issue is linked to a city and APS
+    if @issue.parent&.parent
+      api.zone_code @issue.parent.parent.custom_field_value(280).to_s.encode("UTF-8", invalid: :replace, undef: :replace, replace: "?")
+      api.aps_gps_latitude @issue.parent.parent.custom_field_value(226)  || "Undefined"
+      api.aps_gps_longitude @issue.parent.parent.custom_field_value(227) || "Undefined"
+     else
+      api.zone_code "Action not linked to a city or APS"
+    end
+
+    api.city_code @issue.parent&.custom_field_value(271) || "Undefined"
+    api.priority_name @issue.priority&.name || "Unknown priority"
+    api.author_name @issue.author&.name || "Unknown author"
+    api.parent_id @issue.parent_id unless @issue.parent.nil?
+    api.parent_subject @issue.parent&.subject || "No parent"
+    api.subject @issue.subject || "Unknown subject"
+    api.deadline @issue.custom_field_value(14) || "Undefined"
+    api.start_date @issue.start_date || "Not specified"
+    api.due_date @issue.due_date || "Not specified"
+    api.progress_percentage @issue.done_ratio || 0
+    api.amount_committed @issue.estimated_hours || 0
+    api.ref_ods @issue.custom_field_value(18) || "Undefined"
+    # Keep ods_file as basic "attachment/id"
+    if @issue.custom_field_value(192).present?
+      attachment_id = @issue.custom_field_value(192).to_i
+      api.ods_file "attachment/#{attachment_id}"
+    else
+      api.ods_file "Undefined"
+    end
+    api.contractor_code @issue.custom_field_value(19) || "Undefined"
+    # Handle specific tracker types
+    case @issue.tracker_id
+    when 60
+      api.planned_capacity @issue.custom_field_value(24) || "Undefined"
+      api.engaged_pbu_count @issue.custom_field_value(262) || "Undefined"
+      api.realized_capacity @issue.custom_field_value(28) || "Undefined"
+    when 4
+      api.dist_linear_planned @issue.custom_field_value(217) 
+      api.dist_linear_realized @issue.custom_field_value(218)
+      api.alveolus_planned @issue.custom_field_value(74)
+      api.alveolus_realized @issue.custom_field_value(27)
+
+
+    else
+      api.ERROR "No specific data for this issue type."
+    end
   end
 
-  render_api_custom_values @issue.visible_custom_field_values, api
 
-  api.created_on @issue.created_on
-  api.updated_on @issue.updated_on
-  api.closed_on @issue.closed_on
 
-  render_api_issue_children(@issue, api) if include_in_api_response?('children')
-
-  api.array :attachments do
-    @issue.attachments.each do |attachment|
-      render_api_attachment(attachment, api)
-    end
-  end if include_in_api_response?('attachments')
-
-  api.array :relations do
-    @relations.each do |relation|
-      api.relation(:id => relation.id, :issue_id => relation.issue_from_id, :issue_to_id => relation.issue_to_id, :relation_type => relation.relation_type, :delay => relation.delay)
-    end
-  end if include_in_api_response?('relations') && @relations.present?
-
-  api.array :changesets do
-    @changesets.each do |changeset|
-      api.changeset :revision => changeset.revision do
-        api.user(:id => changeset.user_id, :name => changeset.user.name) unless changeset.user.nil?
-        api.comments changeset.comments
-        api.committed_on changeset.committed_on
-      end
-    end
-  end if include_in_api_response?('changesets')
-
-  api.array :journals do
-    @journals.each do |journal|
-      api.journal :id => journal.id do
-        api.user(:id => journal.user_id, :name => journal.user.name) unless journal.user.nil?
-        api.notes journal.notes
-        api.created_on journal.created_on
-        api.private_notes journal.private_notes
-        api.array :details do
-          journal.visible_details.each do |detail|
-            api.detail :property => detail.property, :name => detail.prop_key do
-              api.old_value detail.old_value
-              api.new_value detail.value
-            end
-          end
-        end
-      end
-    end
-  end if include_in_api_response?('journals')
-
-  api.array :watchers do
-    @issue.watcher_users.each do |user|
-      api.user :id => user.id, :name => user.name
-    end
-  end if include_in_api_response?('watchers') && User.current.allowed_to?(:view_issue_watchers, @issue.project)
-
-  api.array :allowed_statuses do
-    @allowed_statuses.each do |status|
-      api.status :id => status.id, :name => status.name, :is_closed => status.is_closed
-    end
-  end if include_in_api_response?('allowed_statuses')
-end

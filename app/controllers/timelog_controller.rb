@@ -167,7 +167,8 @@ class TimelogController < ApplicationController
       respond_to do |format|
         format.html do
           flash[:notice] = l(:notice_successful_update)
-          redirect_back_or_default project_time_entries_path(@time_entry.project)
+          #redirect_back_or_default project_time_entries_path(@time_entry.projecti)
+          redirect_to issue_path(@time_entry.issue)
         end
         format.api  {render_api_ok}
       end

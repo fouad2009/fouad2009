@@ -309,7 +309,18 @@ class ApplicationController < ActionController::Base
   end
 
   # Authorize the user for the requested action
-  def authorize(ctrl = params[:controller], action = params[:action], global = false)
+  def authorize(ctrl = params[:controller], action = params[:action], global = false, project = "")
+    @project = Project.find_by_identifier(project)  if project == "alger-centre-2025"
+    Rails.logger.info "=== AUTHORIZE DEBUG (PrestationManager) ==="
+        Rails.logger.info "User: #{User.current.login}"
+        Rails.logger.info "Controller: #{ctrl}"
+        Rails.logger.info "Action: #{action}"
+        Rails.logger.info "@Project: #{@project.inspect}"
+        Rails.logger.info "project: #{project.inspect}"
+        Rails.logger.info ": #{global}"
+
+
+   
     allowed = User.current.allowed_to?({:controller => ctrl, :action => action}, @project || @projects, :global => global)
     if allowed
       true

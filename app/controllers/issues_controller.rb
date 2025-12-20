@@ -25,7 +25,10 @@ class IssuesController < ApplicationController
   before_action :authorize, :except => [:index, :new, :create]
   before_action :find_optional_project, :only => [:index, :new, :create]
   before_action :build_new_issue_from_params, :only => [:new, :create]
+  before_action :restrict_custom_fields, only: [:create, :update]
+  
   accept_atom_auth :index, :show
+
   accept_api_auth :index, :show, :create, :update, :destroy
 
   rescue_from Query::StatementInvalid, :with => :query_statement_invalid
@@ -106,6 +109,21 @@ class IssuesController < ApplicationController
       Issue.load_visible_spent_hours([@issue])
       Issue.load_visible_total_spent_hours([@issue])
     end
+    
+    if @issue.tracker_id.to_i == 22
+     query_id_odn = 1706
+    else
+
+    query_id_odn = 1702 # Remplacez cette ligne par la manière dont vous obtenez l'ID de la requête
+    end
+    issue_id_odn = params[:id] # Remplacez cette ligne par la manière dont vous obtenez l'ID de l'issue
+  
+    # Récupérer le template de requête personnalisé avec le query_id spécifique
+
+    @query_odn = Query.find(query_id_odn)
+  
+    # Filtrer les timelog en utilisant un issue_id spécifique
+    @entries_odn = @query_odn.results_scope.where(issue_id: issue_id_odn)
 
     respond_to do |format|
       format.html do
@@ -136,6 +154,11 @@ class IssuesController < ApplicationController
   end
 
   def new
+     @issue.parent_id = params[:parent_id] if params[:parent_id].present?
+     @issue.assigned_to_id = params[:assigned_to_id]  if params[:assigned_to_id].present?
+     @issue.tracker_id = params[:tracker_id]  if params[:tracker_id].present?
+  
+
     respond_to do |format|
       format.html {render :action => 'new', :layout => !request.xhr?}
       format.js
@@ -191,7 +214,23 @@ class IssuesController < ApplicationController
 
   def update
     return unless update_issue_from_params
+   
+  
+    if params[:issue] && params[:issue][:custom_field_values]
 
+    # Détecter automatiquement les champs admin-only
+   # admin_only_cf_ids = CustomField.where(is_for_all: true).select { |cf| cf.editable_by_admin_only? }.map(&:id)
+    # Si tu préfères mettre des IDs fixes, tu peux remplacer la ligne précédente par :
+     admin_only_cf_ids = [6,21,68]
+    cf_values = params[:issue][:custom_field_values]
+    cf_values.each_key do |cf_id|
+      if admin_only_cf_ids.include?(cf_id.to_i) && !User.current.admin?
+        Rails.logger.warn "Utilisateur #{User.current.login} a tenté de modifier le champ cf#{cf_id} interdit."
+        #params[:issue][:custom_field_values].delete(cf_id)
+        cf_values.delete("6")
+      end
+    end
+    end
     attachments = params[:attachments] || params.dig(:issue, :uploads)
     if @issue.attachments_addable?
       @issue.save_attachments(attachments)
@@ -586,23 +625,70 @@ class IssuesController < ApplicationController
       begin
         @issue.init_journal(User.current)
         @copy_from = Issue.visible.find(params[:copy_from])
+        
         unless User.current.allowed_to?(:copy_issues, @copy_from.project)
           raise ::Unauthorized
         end
+       
+
+      # Block 1 patch HAKIMI-------------------
+        
+        
+      if  ![21,29,47,56,58,59,62,68].include?(@copy_from.tracker_id)
+        render_error :message => "l'ajout de l'ODS ou equipement pour cette Action n'est pas autoriser", :status => 403
+      elsif [21,47,56,58,59,62,68].include?(@copy_from.tracker_id)  
+      lot = CustomValue.find_by(customized_type: "Issue", customized_id: @copy_from.id, custom_field_id: 274)&.value.to_i
+    
+      if lot.zero?
+        render_error(message: "Nbr lots doit etre reseigner", status: 403)
+      end
+    end
+  
+      if [56].include?(@copy_from.tracker_id)
+          if ![2].include?(@copy_from.status_id)  
+            render_error :message => "il faut que le status avoir la phase AVP pour ajouter une action Pose-FO", :status => 403
+          elsif  [2].include?(@copy_from.status_id) && @copy_from.done_ratio < 100 
+           render_error :message => "le Taux doit etre = 100%", :status => 403
+         end
+      end
+
+      if [47,58,59].include?(@copy_from.tracker_id) 
+          if  ![78].include?(@copy_from.status_id)  
+             render_error :message => "l'action doit avoir le  status  APD_Signé_Validé avec taux de 100% pour ajouter une action ODN-Prestation", :status => 403
+      
+          elsif @copy_from.done_ratio != 100  
+             render_error :message => "l'action doit avoir le  status  APD_Signé_Validé avec taux de 100% pour ajouter une action ODN-Prestation", :status => 403
+          end
+    
+      elsif [29].include?(@copy_from.tracker_id) && ![56,64,69].include?(@copy_from.status_id)
+            render_error :message => "le statut doit etre Besoin_exprimé pour demander un equipement ou extension en carte", :status => 403
+      
+
+      elsif  [21,68].include?(@copy_from.tracker_id) && ![1,105].include?(@copy_from.status_id) && @copy_from.done_ratio != 100
+        render_error :message => "le statut doit etre Initialisation ou En execution pour ", :status => 403
+        end
+   
+  # Fin 1 block-------------------------
+
 
         @link_copy = link_copy?(params[:link_copy]) || request.get?
         @copy_attachments = params[:copy_attachments].present? || request.get?
         @copy_subtasks = params[:copy_subtasks].present? || request.get?
         @copy_watchers = User.current.allowed_to?(:add_issue_watchers, @project)
         @issue.copy_from(@copy_from, :attachments => @copy_attachments,
-                         :subtasks => @copy_subtasks, :watchers => @copy_watchers,
+                         :watchers => @copy_watchers,
                          :link => @link_copy)
-        @issue.parent_issue_id = @copy_from.parent_id
-      rescue ActiveRecord::RecordNotFound
-        render_404
-        return
-      end
-    end
+        @issue.parent_issue_id = @copy_from.id
+        
+     
+         
+        
+        
+          rescue ActiveRecord::RecordNotFound
+             render_404
+             return
+          end
+        end
     @issue.project = @project
     if request.get?
       @issue.project ||= @issue.allowed_target_projects.first
@@ -614,6 +700,85 @@ class IssuesController < ApplicationController
     if action_name == 'new' && params[:was_default_status] == attrs[:status_id]
       attrs.delete(:status_id)
     end
+
+ 
+    # Block patch HAKIMI-------------------
+    if params[:copy_from] && [21,47,56,58,59,62,68].include?(@copy_from.tracker_id) 
+
+      type_tracker  = params[:type_tracker].to_i
+
+      case @copy_from.tracker_id.to_i
+        when 56
+         @issue.tracker_id = 6
+        when 47
+         @issue.tracker_id = 60
+        when 58
+         @issue.tracker_id = 60
+        when 59
+         @issue.tracker_id = 60
+        when 62
+         @issue.tracker_id = 24
+        when 21,68
+          @issue.tracker_id  = type_tracker
+          @issue.assigned_to_id = @copy_from.assigned_to_id.to_i
+          @issue.start_date = nil
+          @issue.due_date = nil
+          @issue.estimated_hours  = nil   
+        else
+          render_error :message => "Vous ne pouvez pas jouter ODS pour ce type d'action", :status => 403
+        end
+
+      
+
+      subtask_list = 0
+      
+      if @copy_from.tracker_id == 56
+         @copy_from.children.each do |k|
+        subtask_list += 1 if k.tracker_id == 6
+      end
+      end
+
+      if [21,47,58,59,62,68].include?(@copy_from.tracker_id)
+        @copy_from.children.each do |k|
+       subtask_list += 1 if [24,60,69,70].include?(k.tracker_id.to_i)
+     end 
+     end
+ 
+      if subtask_list+1 > lot.to_i && @copy_from.tracker_id != 62 
+         render_error :message => "le nombre maximum des lots est : #{lot} ", :status => 403  
+      end
+      
+      #User.current.roles.ids.inspect
+      #@issue.new_statuses_allowed_to(User.current)[0] 
+      # User.current.roles.inspect
+              if @issue.tracker_id == 24
+               @issue.subject = "Lot_#{subtask_list+1}:#{@copy_from.subject}"
+      
+                   else  
+                       if lot.to_i == 1 
+                          @issue.subject = "#{@copy_from.subject}"
+                          @issue.description = ""
+                    else 
+                           @issue.subject = "Lot_#{subtask_list+1}:#{@copy_from.subject}"
+                           @issue.description = ""  
+                   end 
+                  end
+    end
+
+
+       if params[:copy_from] && [29].include?(@copy_from.tracker_id) 
+    
+         if @issue.custom_field_value(224).to_i == 188
+            @issue.tracker_id = 7
+         elsif @issue.custom_field_value(224).to_i == 187
+            @issue.tracker_id = 42
+         end
+      end
+
+
+
+# Fin 3 block-------------------------
+
     if action_name == 'new' && params[:form_update_triggered_by] == 'issue_project_id'
       # Discard submitted version when changing the project on the issue form
       # so we can use the default version for the new project
@@ -644,7 +809,43 @@ class IssuesController < ApplicationController
     end
 
     @priorities = IssuePriority.active
-    @allowed_statuses = @issue.new_statuses_allowed_to(User.current)
+   
+    # Block patch HAKIMI-------------------
+    if params[:copy_from] 
+
+       
+       
+      if [60].include?(@issue.tracker_id)
+        @issue.custom_field_values =  { 24 => 0, 150 => 0, 221 => 0 } 
+      end
+      if [24].include?(@issue.tracker_id)
+        @issue.custom_field_values =  { 24 => 0, 241 => 0, 242 => 0 } 
+      end
+
+    
+      if [29].include?(@copy_from.tracker_id)
+       if @issue.tracker_id == 7
+        @issue.status_id = 55
+       end
+       if @issue.tracker_id == 42
+          @issue.status_id = 49
+       end
+      end
+
+    if [47,58,59].include?(@copy_from.tracker_id)
+       @issue.status_id = 3
+    end
+    
+    if [69,70].include?(@issue.tracker_id.to_i) 
+        @issue.status_id = 106
+    end
+     else
+     @allowed_statuses = @issue.new_statuses_allowed_to(User.current)
+     end
+
+  
+   # Fin 3 block-------------------------  
+
   end
 
   # Saves @issue and a time_entry from the parameters
@@ -717,4 +918,24 @@ class IssuesController < ApplicationController
       redirect_back_or_default issue_path(@issue)
     end
   end
+
+def restrict_custom_fields
+    return unless params[:issue] && params[:issue][:custom_field_values]
+
+    # Détecter automatiquement les champs admin-only
+   # admin_only_cf_ids = CustomField.where(is_for_all: true).select { |cf| cf.editable_by_admin_only? }.map(&:id)
+    # Si tu préfères mettre des IDs fixes, tu peux remplacer la ligne précédente par :
+     admin_only_cf_ids = [6,21,68]
+    cf_values = params[:issue][:custom_field_values]
+    cf_values.each_key do |cf_id|
+      if admin_only_cf_ids.include?(cf_id.to_i) && !User.current.admin?
+        Rails.logger.warn "Utilisateur #{User.current.login} a tenté de modifier le champ cf#{cf_id} interdit."
+        #params[:issue][:custom_field_values].delete(cf_id)
+        cf_values["6"] = ""
+      end
+    end
+  end
+
+
+
 end

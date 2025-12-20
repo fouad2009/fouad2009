@@ -318,6 +318,10 @@ class Issue < ActiveRecord::Base
       self.watcher_user_ids =
         issue.watcher_users.select{|u| u.status == User::STATUS_ACTIVE}.map(&:id)
     end
+
+    # Désactiver la copie des sous-tâches même si l'option est présente
+    options[:subtasks] = false
+
     @copied_from = issue
     @copy_options = options
     self
@@ -325,7 +329,7 @@ class Issue < ActiveRecord::Base
 
   # Returns an unsaved copy of the issue
   def copy(attributes=nil, copy_options={})
-    copy = self.class.new.copy_from(self, copy_options)
+    copy = self.class.new.copy_from(self, copy_options.merge(subtasks: false))
     copy.attributes = attributes if attributes
     copy
   end

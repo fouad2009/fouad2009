@@ -2,6 +2,7 @@
 
 require File.expand_path('../boot', __FILE__)
 
+require 'logger'
 require 'rails'
 # Pick the frameworks you want:
 require 'active_model/railtie'
@@ -14,6 +15,7 @@ require 'action_view/railtie'
 require 'action_cable/engine'
 # require 'sprockets/railtie'
 require 'rails/test_unit/railtie'
+
 
 Bundler.require(*Rails.groups)
 
@@ -92,6 +94,8 @@ module RedmineApp
       :path => config.relative_url_root || '/',
       :same_site => :lax
     )
+
+      
 
     if File.exist?(File.join(File.dirname(__FILE__), 'additional_environment.rb'))
       instance_eval File.read(File.join(File.dirname(__FILE__), 'additional_environment.rb'))

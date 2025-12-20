@@ -1,8 +1,112 @@
 <% if User.current.allowed_to?(:view_issues, @project) %>
 <% if @trackers.present? %>
+  
+<% data_chart = {} %>
+<% if  [53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,154,465].include?(@project.id.to_i)%>
+<div class="tab-container">
+  <div class="tab active" onclick="changeTab(event, 'tab8')">Suivi contrat</div>
+  <div class="tab" onclick="changeTab(event, 'tab9')">Suivi Contart gré à gré</div>
+  <div class="tab" onclick="changeTab(event, 'tab10')">Suivi acquisition</div>
+  <div class="tab" onclick="changeTab(event, 'tab11')">Suivi Acquisistion et réalisation</div>
+
+<% if  [63].include?(@project.id.to_i)%>
+   <div class="tab" onclick="changeTab(event, 'tab6')">Liaisons FO</div>
+<% end %>
+
+</div>
+ 
+<div id="tab8" class="tab-content">
+<h4>Suivi Contrat </h4>
+<div class="etat-realisations">
+
+    <div class="graph-chart">
+        <div class="chart-contrat-grid">
+          <div class="chart-canvas"> <canvas id="chart-14"></canvas></div>
+          <div class="chart-canvas"> <canvas id="chart-13"></canvas></div>
+       </div>
+    </div>
+   
+    <table class="odn">
+   <%= display_contrat(@process_data_report,@project) %>
+
+    </table>
+ </div>
+</div>
 
 
-<% if (276..403).include?(@project.id.to_i) %>
+<div id="tab9" class="tab-content">
+
+  <h4>Suivi Contrat gré à gré</h4>
+  <%= normalise_data_central(@process_data_report) if User.current.admin? %>
+<div class="etat-realisations">
+
+    <div class="graph-chart">
+        <div class="chart-contrat-grid">
+          <div class="chart-canvas"> <canvas id="chart-23"></canvas></div>
+       </div>
+    </div>
+   
+    <table class="odn">
+   <%= display_contrat_gre(@process_data_report,@project) %>
+
+    </table>
+ </div>
+</div>
+
+
+
+<div id="tab10" class="tab-content">
+    <h4>Suivi acquisition</h4>
+   <div class="etat-realisations">
+
+<div class="graph-chart">
+        <div class="chart-grid3">
+
+            <div class="chart-canvas"> <canvas id="chart-15"></canvas></div>
+            <div class="chart-canvas"> <canvas id="chart-16"></canvas></div>
+            <div class="chart-canvas"> <canvas id="chart-17"></canvas></div>
+        </div>
+      </div>
+      <table class="odn">
+        <%= display_acquisition(@process_data_report,@project) %>
+      </table>
+
+   </div>
+</div>
+
+
+
+<div id="tab11" class="tab-content">
+  <h4>Suivi acquisition et prestation</h4>i
+   <div class="etat-realisations">
+     <div class="graph-chart">
+      <div class="chart-grid4">
+            <div class="chart-canvas"> <canvas id="chart-19"></canvas></div>
+            <div class="chart-canvas"> <canvas id="chart-20"></canvas></div>
+            <div class="chart-canvas"> <canvas id="chart-21"></canvas></div>
+            <div class="chart-canvas"> <canvas id="chart-22"></canvas></div>
+      </div>
+     </div>
+     <table class="odn">
+         <%= display_acquisition_realisation(@process_data_report,@project) %>
+     </table>
+   </div>
+</div>
+
+
+<% if  [63].include?(@project.id.to_i)%>
+<div id="tab6" class="tab-content">
+    <h4>Suivi des réalisations Pose FO</h4>
+   <div class="etat-realisations">
+      <table class="odn">
+        <%= display_process_data(@process_data_report,[6],@project, data_chart) %>
+      </table>
+   </div>
+</div>
+<% end %>
+
+
+<% elsif (219..464).include?(@project.id.to_i) %>
 
 
 
@@ -13,7 +117,11 @@
   <div class="tab" onclick="changeTab(event, 'tab6')">Liaisons FO</div>
   <div class="tab" onclick="changeTab(event, 'tab4')">Batiment</div>
   <div class="tab" onclick="changeTab(event, 'tab5')">Corporate DOT</div>
-  
+  <% if (404..464).include?(@project.id.to_i) %>
+  <div class="tab" onclick="changeTab(event, 'tab7')">Preparation PA</div>
+  <% end %> 
+ 
+
 </div>
 
 
@@ -34,6 +142,8 @@
 
  <div id="tab3" class="tab-content">
    <h4>Realisation 4G </h4>
+   <%= @process_data_report %>
+
    <div class="etat-realisations">
      <table class="actif">
         <%= display_process_actif(@process_data_report,[7,8,9,10,32,42],@project) %>
@@ -44,10 +154,13 @@
 <div id="tab4" class="tab-content">
 
   <h4>Realisation Batiment</h4>
-     <div class="etat-realisations">
-       <% tracker_ids = @trackers.reject { |tracker| [4,7,6,8,9,10,29,27,30,32,33,47,42,52,53,54,58,59,61,62].include?(tracker.id) }.map(&:id) %>
+
+   <%= @report_par_dot %>
+
+  <div class="etat-realisations">
+       <% tracker_ids = @trackers.reject { |tracker| [4,7,6,8,9,10,29,27,30,32,33,47,42,52,53,54,58,59,61,62,64,65,67].include?(tracker.id) }.map(&:id) %>
           <table class="batiment">
-            <%= display_process_data(@process_data_report,tracker_ids,@project) %>
+            <%= display_process_data(@process_data_report,tracker_ids,@project,data_chart) %>
           </table>
      </div>
 
@@ -56,19 +169,48 @@
     <h4>Actions corporate</h4>
    <div class="etat-realisations">
       <table class="odn">
-        <%= display_process_data(@process_data_report,[52,53,54,61],@project) %>
+        <%= display_process_data(@process_data_report,[52,53,54,61],@project,data_chart) %>
       </table>
    </div>
 </div>
 
 <div id="tab6" class="tab-content">
-    <h4>Suivi des réalisations Pose FO</h4>
+  <h4>Suivi des réalisations Pose FO</h4>
+  
+   <div class="etat-realisations">
+     
+      <div class="graph-chart">
+      <div class="chart-grid4">
+            <div class="chart-canvas"> <canvas id="chart-23"></canvas></div>
+            <div class="chart-canvas"> <canvas id="chart-24"></canvas></div>
+            <div class="chart-canvas"> <canvas id="chart-25"></canvas></div>
+            <div class="chart-canvas"> <canvas id="chart-26"></canvas></div>
+      </div>
+     </div>
+
+
+     <table class="odn">
+        <%= display_process_data(@process_data_report,[6,27,30,33],@project, data_chart) %>
+      </table>
+   </div>
+<% if data_chart.present? %>
+  <div id="chart-data_pa" style="display:none;">
+    <%= data_chart.to_json.html_safe %>
+  </div>
+<% end %>
+</div>
+
+
+<% if (404..464).include?(@project.id.to_i) %>
+  <div id="tab7" class="tab-content">
+    <h4>Preparation PA</h4>
    <div class="etat-realisations">
       <table class="odn">
-        <%= display_process_data(@process_data_report,[6,27,30,33],@project) %>
+        <%= process_pa(@process_data_report,[64,65,67],@project) %>
       </table>
    </div>
 </div>
+<% end %>
 
 <div id="tab1" class="tab-content  partie_acces" style="display: block;">
   
@@ -168,17 +310,18 @@
                </div>
             
                <div class="Raccordements">
-               <div class="odn-realiations"><p>Raccordements clients: réalisations (FTTH-Cuivre)</p></div>
+               <div class="odn-realiations"><p>Situation ODN Vendable</p></div>
                   <div class="pa-dev-container" >
                          <div class="odn_inscrit" >
-                             <p>Capacité Inscrite  </p>
-                             <p><%= link_to display_racc_data(@racc_objectif,@racc_realiser,:objectif_racc),
+                             <p>Capacité réceptionnée  </p>
+                             <p><%= link_to display_racc_data(@racc_objectif,:objectif_racc),
                               project_issues_path(@project, :query_id => 1461),style: "font-size: 1.2rem; font-family: sans-serif; color: #088080; margin-left:10px;", target: "_blank"%></p>
                          </div>
                          <div class="odn_realise" >
-                            <p>Acces réalisés </p>
-                            <p><%= link_to display_racc_data(@racc_objectif,@racc_realiser,:realiser_racc), 
-                            project_issues_path(@project, :query_id => 1462),style: "font-size: 1.2rem; font-family: sans-serif; color: #088080;margin-left:10px;", target: "_blank"%></p>
+                            <p>Acces vendable </p>
+                            <p><%= link_to display_racc_data(@racc_objectif,:realiser_racc), 
+                            project_issues_path(@project, :query_id => 1499),style: "font-size: 1.2rem; font-family: sans-serif; color: #088080;margin-left:10px;", target: "_blank"%></p>
+
                          </div>
                          
                   </div>
@@ -196,7 +339,7 @@
                       
                       <div class="left-container">
                         <div class="graph">
-                          <div id="myChart"></div>
+                          <canvas id="myChart"></canvas>
                         </div>
                       </div>
 
@@ -221,7 +364,7 @@
     <div class="graph-container" id="graph2">
        <div class="left-container">
           <div class="graph">
-            <div id="modChart"></div></div>
+            <canvas id="modChart"></canvas></div>
        </div>
 
      <div class="text-container">
@@ -311,6 +454,8 @@
  </div>
 </div>
  </div>
+
+
    <div class="acces-filair">
     <h4>Realisation ODN </h4>
    </div>
@@ -322,6 +467,7 @@
      <%= display_process_data(@process_data_report,[4,29,47,58],@project) %>
     </table>
     </div>
+
       <% else  %>
         <table class="list issue-report">
       <thead>
@@ -368,11 +514,14 @@
 
 
 <% html_title(l(:label_overview)) -%>
-<%= javascript_include_tag "loader.js" %>
-    <%= javascript_include_tag "display.v1.js" %>
-
-
-
+<%= javascript_include_tag "chart.umd.min.js" %>
+<%= javascript_include_tag 'chartjs-plugin-datalabels.min.js' %>
+<%= javascript_include_tag "chartjs-plugin-annotation.min.js" %>
+<%= javascript_include_tag "chartjs-plugin-zoom.min.js" %>
+<%= javascript_include_tag "display.v1.js" %>
+<%= javascript_include_tag "chart_central.js" %>
+<%= javascript_include_tag "chart_pa.js" %>
 
   
+
 

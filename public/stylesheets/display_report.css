@@ -1,3 +1,27 @@
+
+/* Style de base de la liste déroulante */
+#query_project {
+  width: 200px; /* Largeur de la liste déroulante */
+  padding: 4px; /* Espacement à l'intérieur de la liste déroulante */
+  font-size: 14px; /* Taille de la police */
+  border: 1px solid #ccc; /* Bordure */
+  border-radius: 5px; /* Coins arrondis */
+  background-color: #f0f0f0; /* Couleur de fond */
+  color: #444; /* Couleur du texte */
+}
+
+/* Style des options de la liste déroulante */
+#query_project option {
+  padding: 5px; /* Espacement à l'intérieur des options */
+}
+
+/* Style pour la première option de la liste déroulante */
+#query_project option:first-child {
+  font-style: italic; /* Italique pour la première option */
+}
+
+
+
 /* Style pour les onglets */
 .tab-container {
   display: flex;
@@ -547,7 +571,86 @@ background-color: #008CBA;
   color:  rgb(150, 148, 148);;
 }
 
+/* graphe partie central */
 
+
+/* Conteneur principal */
+.graph-chart {
+    display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  /* border: 1px solid #ddd;*/
+  height: 300px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  background-color: #D3DCE3;
+  padding: 10px;
+}
+
+
+.graph-chart .chart-contrat-grid {
+    display: grid;
+    grid-template-columns: 8fr 2fr;; /* Premier bloc 80%, deuxième bloc 20% */
+    gap: 10px;
+    height: 100%; /* Prend toute la hauteur de .graph-chart */
+    width: 100%;
+    background-color: #D3DCE3;
+    border-radius: 5px;
+}
+
+/* Grid contenant les graphiques */
+.graph-chart .chart-grid3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 4 colonnes égales */
+    gap: 10px;
+    height: 100%; /* Prend toute la hauteur de .graph-chart */
+    width: 100%;
+    background-color: #D3DCE3;
+    border-radius: 5px;
+}
+/* Grid contenant les graphiques */
+.graph-chart .chart-grid4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 colonnes égales */
+    gap: 10px;
+    height: 100%; /* Prend toute la hauteur de .graph-chart */
+    width: 100%;
+    background-color: #D3DCE3;
+    border-radius: 5px;
+}
+
+/* Conteneur individuel de chaque graphique */
+.chart-canvas {
+
+ background-color:  #f5f5f5;
+flex-grow: 1;
+width: 100%;
+height: 100%;
+/*  border: 1px solid red; */
+text-align: center;
+display: flex;
+align-items: center;
+justify-content: center;
+border-radius: 10px;
+ box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+padding: 10px;
+overflow: hidden; /* Empêche tout débordement */
+box-sizing: border-box; /* Inclut les bordures/paddings dans les dimensions */
+/* Canvas s'adapte à la hauteur et largeur du parent */}
+
+canvas {
+    background-color:  #f5f5f5;;
+     display: block; 
+    max-width: 100%;
+    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Garde un bon ratio */
+}
+
+
+.odn {  margin:10px;}
 
 @media screen and (max-width: 768px) {
   .etat-realisations table {

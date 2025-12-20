@@ -15,6 +15,11 @@ gem 'i18n', '~> 1.14.1'
 gem 'rbpdf', '~> 1.21.3'
 gem 'addressable'
 gem 'rubyzip', '~> 2.3.0'
+gem 'sidekiq', '~> 6.5'
+gem 'redis'
+gem 'redis-rails'
+gem 'blankslate', '~> 3.1.0'
+gem 'concurrent-ruby', '1.1.10'
 
 #  Ruby Standard Gems
 gem 'csv', '~> 3.2.6'
@@ -111,6 +116,7 @@ group :test do
   gem 'rubocop', '~> 1.57.0', require: false
   gem 'rubocop-performance', '~> 1.19.0', require: false
   gem 'rubocop-rails', '~> 2.22.1', require: false
+  gem 'rspec-rails', '~> 5.0'
 end
 
 local_gemfile = File.join(File.dirname(__FILE__), "Gemfile.local")
