@@ -1,0 +1,24 @@
+<!-- plugins/prestation_manager/app/views/prestataires/_form_row.html.erb -->
+<tr id="prestataire-<%= prestataire.id %>" class="inline-edit">
+  <td><%= prestataire.id %></td>
+
+  <td colspan="3">
+    <%= form_with model: prestataire,
+                  url: update_inline_project_prestataire_path(@project,prestataire),
+                  method: :patch,
+                  remote: true, local: false do |f| %>
+
+      <%= f.text_field :nom, placeholder: "Nom", size: 25 %>
+      <%= f.text_field :identifiant, placeholder: "Identifiant", size: 12 %>
+      <%= f.text_field :nif, placeholder: "NIF", size: 12 %>
+      <%= f.text_field :etat, placeholder: "État", size: 8 %>
+
+      <%= f.submit 'Enregistrer', class: 'button-small' %>
+      <%= link_to 'Annuler', cancel_inline_project_prestataire_path(@project,prestataire), remote: true, class: 'button-small' %>
+
+    <% end %>
+  </td>
+
+  <td></td>
+</tr>
+

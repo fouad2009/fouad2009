@@ -1,0 +1,5 @@
+// plugins/prestation_manager/app/views/prestataires/edit_inline.js.erb
+$("#prestataire-<%= @prestataire.id %>").replaceWith(
+  "<%= j(render partial: 'prestataires/form_row', locals: { prestataire: @prestataire }) %>"
+);
+

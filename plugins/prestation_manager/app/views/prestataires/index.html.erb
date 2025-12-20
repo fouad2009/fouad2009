@@ -1,0 +1,21 @@
+<!-- plugins/prestation_manager/app/views/prestataires/index.html.erb -->
+<h2>Liste des prestataires</h2>
+<%= @project.inspect %>
+<%= @prestataire.inspect %>
+<table class="list issues">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nom</th>
+      <th>Identifiant</th>
+      <th>NIF</th>
+      <th>État</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+
+  <tbody id="prestataires-table">
+    <%= render @prestataires, project: @project %>
+  </tbody>
+</table>
+

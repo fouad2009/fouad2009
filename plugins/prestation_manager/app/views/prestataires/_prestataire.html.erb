@@ -1,0 +1,13 @@
+<tr id="prestataire-<%= prestataire.id %>">
+  <td><%= prestataire.id %></td>
+  <td><%= prestataire.nom %></td>
+  <td><%= prestataire.identifiant %></td>
+  <td><%= prestataire.nif %></td>
+  <td><%= prestataire.etat %></td>
+  <td>
+    <% if User.current.allowed_to?(:edit_prestataires, @project) %>
+      <%= link_to 'Modifier', edit_inline_project_prestataire_path(@project,prestataire), remote: true, class: 'edit-prestataire' %>
+      <%= link_to 'Annuler', cancel_inline_project_prestataire_path(@project,prestataire), remote: true, class: 'cancel-prestataire' %>
+    <% end %>
+  </td>
+</tr>
