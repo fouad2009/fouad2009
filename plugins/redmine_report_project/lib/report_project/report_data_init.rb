@@ -1,6 +1,6 @@
 module ReportProject
   module ReportDataInit 
-
+  # Module de generation de la structure de donnée commune pour les projets
   def calculate_for_project(project_parent_id)
 
     project = Project.find(project_parent_id)
