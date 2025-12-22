@@ -1,17 +1,24 @@
 module ReportProject
   module Calculators
-    class Dispatcher
+   
       MAP = {
-        ReportProject::ReportSchema::TRACKERS[:aps]          => APS,
-        ReportProject::ReportSchema::TRACKERS[:odn_dev]      => ODNDev,
-        ReportProject::ReportSchema::TRACKERS[:odn_mod]      => ODNMod,
-        ReportProject::ReportSchema::TRACKERS[:canalisation] => Canalisation
+        29 => ReportProject::Calculators::APS,
+        47 => ReportProject::Calculators::Apd,
+        58 => ReportProject::Calculators::Apd,
+        60 => ReportProject::Calculators::Odn,
+        4 => ReportProject::Calculators::Prestation,
+        6 => ReportProject::Calculators::Prestation,
+        29 => ReportProject::Calculators::Olt,
+        10 => ReportProject::Calculators::Lte,
+        52 => ReportProject::Calculators::Prestation }
       }.freeze
 
+    class Dispatcher
       def self.process(issue, tracker_struct)
         klass = MAP[issue[:tracker_id]] || Base
         klass.process(issue, tracker_struct)
       end
-    end
+    
+    
   end
 end

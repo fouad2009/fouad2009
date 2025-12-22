@@ -1,6 +1,6 @@
 module ReportProject
   module Calculators
-    class APD < Base
+    class Apd < Base
       def self.process(issue, tracker_struct)
         super  # 🔹 logique commune
 
