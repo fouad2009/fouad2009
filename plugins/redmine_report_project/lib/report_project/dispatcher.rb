@@ -15,7 +15,7 @@ module ReportProject
 
     class Dispatcher
       def self.process(issue, tracker_struct)
-        klass = MAP[issue[:tracker_id]] || Base
+        klass = MAP[issue[:tracker_id]] || Common
         klass.process(issue, tracker_struct)
       end
     

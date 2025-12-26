@@ -3,15 +3,13 @@
 module ReportProject
   module ReportSchema
 
-    # =====================================================
-    # 🔹 Metrics (champs de mesure pour chaque état)
-    # =====================================================
-    # count : nombre d'éléments
-    # quantity : consistance ou quantité associée
-    METRIC_FIELDS = %i[
-      count
-      quantity
-    ].freeze
+    
+
+     # =====================================================
+     # 🔹 Type Exercice 
+     # =====================================================
+      
+      EXERCICES_TYPE = %i[pa hp rar].freeze
 
      # =====================================================
      # 🔹 Metrics Entête de la structure 
@@ -32,39 +30,33 @@ module ReportProject
     # Chaque état représente une étape dans le processus projet/tracker.
     # Ces états seront utilisés pour initialiser la structure de chaque tracker.
     
-    STATES_CORE = %i[
-      planned           # prévu
-      planned_hp        # prévu HP
-      not_started       # non entamé
-      study_in_progress # étude en cours
-      study_completed   # étude finalisée
-      consultation      # consultation
-      committed         # engagé
-      in_progress_pa    # en cours PA
-      in_progress_hp    # en cours HP
-      in_progress_rar   # en cours RAR
-      completed_pa      # réalisé PA
-      completed_hp      # réalisé HP
-      completed_rar     # réalisé RAR
-      odn_completed     # ODN achevé
-      sellable          # vendable
-      global_stop       # arrêt global
-      closed            # clôturé
-      site_preparation  # préparation site
-      site_validated    # site validé
-      equipment_request      # demande dotation
-      installation_request   # demande installation
-      request_approved       # dotation validée
-      equipped          # dotation réalisée
-      installed         # installé
-      service_activated # MES / service activé
-      in_operation      # en exploitation
-      service_preparation  # prestation préparation
-      service_committed    # prestation engagée
-      service_execution    # prestation en cours/exécution
-      service_completed    # prestation achevée
-    ].freeze
-
+     STATES_CORE = %i[
+          planned              # Action prévue (planifiée, non démarrée)
+          not_started          # Créée mais pas encore entamée
+          study_in_progress    # Étude en cours (APS / APD / faisabilité)
+          study_completed      # Étude finalisée / validée
+          consultation         # Phase de consultation / appel d’offres
+          committed            # Action engagée (marché / BC / décision validée)
+          in_progress          # Travaux / exécution en cours
+          completed            # Travaux / action réalisés
+          odn_completed        # ODN achevé / clôturé techniquement
+          sellable             # Infrastructure vendable / commercialisable
+          global_stop          # Arrêt global (blocage, suspension)
+          closed               # Action clôturée administrativement
+          site_preparation     # Préparation du site (autorisation, logistique)
+          site_validated       # Site validé et prêt (technique / administratif)
+          equipment_request    # Demande de dotation / équipement
+          installation_request # Demande d’installation
+          request_approved     # Demande approuvée (dotation / installation)
+          equipped             # Équipement livré / installé
+          installed            # Installation physique terminée
+          service_activated    # Mise en service (MES / activation)
+          in_operation         # En exploitation / en service
+          service_preparation  # Préparation de la prestation
+          service_committed    # Prestation engagée
+          service_execution    # Prestation en cours d’exécution
+          service_completed    # Prestation achevée
+].freeze
 
      # =====================================================
      # 🔹 PARENTS PROJECTS
@@ -74,46 +66,193 @@ module ReportProject
                         DO_2024: 6, DO_2025: 7, DO_2026: 8,DG_PA: 10
                       } 
 
+     
+# ===============================
+    # 🔹 ÉTAPES GÉNÉRALES
+    # ===============================
+    INITIALISATION          = 1
+    SITE_SURVEY             = 70
+    PLAN_SCHEMA             = 76
+    DEVIS                   = 77
+    APD_SIGNE_VALIDE        = 78
+    EN_REALISATION          = 71
+    ACHEVE                  = 65
+    ZONAGE                  = 66
+    POINTAGE                = 47
+    NOTE_CALCULE            = 60
+    BOQ                     = 67
+    EN_SIGNATURE            = 68
 
+    # ===============================
+    # 🔹 APS / DIR / DO
+    # ===============================
+    APS_APPROUVE_DIRA       = 64
+    SOUS_RESERVE_DIRA       = 45
+    RESERVE_DIRA_LEVEE      = 88
+    APS_APPROUVE_DO         = 56
 
-    # =====================================================
-    # 🔹 Trackers Redmine
-    # =====================================================
-    # Association entre les noms logiques et les IDs Redmine.
-    TRACKERS = {
-      canalisation:   4,
-      pose_fo:        6,
-      odn_dev:       47,
-      odn_mod:       58,
-      pa_4g:         10,
-      rar_4g:        10,
-      aps:           29,
-      odn_service:   60
-    }.freeze
+    # ===============================
+    # 🔹 PHASES PROJET
+    # ===============================
+    BESOIN_EXPRIME          = 69
+    PHASE_ETUDE             = 2
+    PHASE_CONSULTATION      = 3
+    PRET_AU_LANCEMENT       = 42
+    EN_EXECUTION            = 105
+    RECEPTIONNE             = 107
+
+    # ===============================
+    # 🔹 ÉTUDES TECHNIQUES
+    # ===============================
+    ETUDE_RADIO             = 51
+    ETUDE_RADIO_VALIDEE     = 52
+    ETUDE_RADIO_NON_VALIDEE = 72
+    ETUDE_TSSR              = 53
+    ETUDE_TSSR_VALIDEE      = 54
+
+    # ===============================
+    # 🔹 AUTORISATIONS / SITE
+    # ===============================
+    AUTORISATION            = 58
+    AUTORISATION_ACCORDEE   = 79
+    PREPARATION_SITE        = 55
+    SITE_PRET               = 80
+
+    # ===============================
+    # 🔹 DEMANDES / VALIDATIONS
+    # ===============================
+    DEMANDE                 = 48
+    VALIDE                  = 43
+    PROGRAMME               = 44
+    DEMANDE_DOTATION        = 49
+    DOTATION_VALIDEE        = 50
+    DEMANDE_TRANSFERT       = 59
+    TRANSFERT_VALIDE        = 62
+    DEMANDE_INSTALLATION    = 74
+    INSTALLATION_ACCORDEE   = 75
+
+    # ===============================
+    # 🔹 EXÉCUTION TRAVAUX PRESTATION
+    # ===============================
+    DEBUT_EXECUTION         = 4
+    EN_PROGRESSION          = 5
+    EN_DIFFICULTE           = 6
+    A_L_ARRET               = 7
+    
+    # ===============================
+    # 🔹 ACHEVEMENT PRESTATAION 
+    # ===============================
+    TRAVAUX_ACHÈVES         = 61
+    SERVICE_FAIT            = 9
+
+    # ===============================
+    # 🔹 PHASE PAIEMENT PRESTATAION 
+    # ===============================
+    EN_TRAITEMENT           = 10
+    PAIEMENT_SOUS_RESERVE   = 11
+    PAIEMENT_VALIDE         = 12
+    FINALISEE               = 46
+    CLOTURE                = 13
+    # ===============================
+    # 🔹 MISE EN SERVICE
+    # ===============================
+    DOTE                    = 39
+    INSTALLE                = 40
+    MES                     = 41
+    PRET_A_L_EXPLOITATION   = 57
+   
+
+    # ===============================
+    # 🔹 PROSPECTION / PA
+    # ===============================
+    PROSPECTION             = 81
+    EXPRESSION_BESOIN       = 82
+    ETUDE_FAISABILITE       = 83
+    ELABORATION_OFFRE       = 84
+    RECEPTION_BC            = 85
+    ENVOI_BC                = 86
+    LANCEMENT_OC_OP         = 87
+    RECENSEMENT_APPROUVE    = 89
+    CLASSEMENT_GEO          = 113
+    ESTIMATION              = 90
+    PA_VALIDE               = 91
+
+    # ===============================
+    # 🔹 ODN
+    # ===============================
+    ODN_EN_TRAITEMENT       = 92
+    ODN_SOUS_RESERVE        = 93
+    ODN_APPROUVE            = 94
+    ODN_EDITION             = 97
+    ODN_TRANSMIS            = 95
+    ODN_TRANSMIS_MAIL       = 104
+
+    # ===============================
+    # 🔹 EXCEPTIONS / DÉCISIONS
+    # ===============================
+    ANNULE_JUMELAGE         = 98
+    ACTION_APPROUVEE        = 99
+
+    # ===============================
+    # 🔹 COMMISSIONS / CONTRATS
+    # ===============================
+    COMMISSION_GRE_A_GRE    = 108
+    COMMISSION_CDC          = 100
+    ETABLISSEMENT_CDC_CPT   = 101
+    CDC_CPT_APPROUVE        = 103
+    VISA_CCM_ACCORDEE       = 111
+    NEGOCIATION_EN_COURS    = 112
+    CONTRAT_NOTIFIE         = 102
+    GRE_A_GRE_REFUSE        = 109
+    GRE_A_GRE_APPROUVE      = 110
 
     # =====================================================
     # 🔹 Custom Fields  Redmine
     # =====================================================
       
     CUSTOM_FIELDS_LIST = %i[
-     6 #-- Exercice
-     24 #-- Capacité accès ODN prévue
-     27 #-- Km/alvéole réalisé
-     28 #-- Capacité réalisée
-     73 #-- Dist- FO prévue KM
-     74 #-- Km/alvéole prévue
-     83 #-- Distance FO posée /KM
-     241 #-- Accès_cuivre_raccordés
-     242 #-- Accés_FTTH_raccordés
-     253 #-- Scénario
-     262 #-- Spliter_1:8_Client_engagé
-     267 #-- Budget_notifié
-     286 #-- Date_achèvement
-     288 #-- Acces_cuivre_prevue
-     289 #-- Acces_FTTH_prévue
-     293 #-- Commercialisable
-    367 #-- Action ].freeze
+     6        #-- Exercice
+     24       #-- Capacité accès ODN prévue
+     27       #-- Km/alvéole réalisé
+     28       #-- Capacité réalisée
+     73       #-- Dist- FO prévue KM
+     74       #-- Km/alvéole prévue
+     83       #-- Distance FO posée /KM
+     217      #-- Cana_Linéaire_Prévue
+     218      #-- Cana_Linéaire_Réalisée
+     241      #-- Accès_cuivre_raccordés
+     242      #-- Accés_FTTH_raccordés
+     253      #-- Scénario
+     262      #-- Spliter_1:8_Client_engagé
+     267      #-- Budget_notifié
+     286      #-- Date_achèvement
+     288      #-- Acces_cuivre_prevue
+     289      #-- Acces_FTTH_prévue
+     293      #-- Commercialisable
+     367      #-- Action 
+  ].freeze
 
+    CUSTOM_FIELDS_NAME = {
+      exercice: [6, :to_s],
+      capacite_acces_odn_prevue: [24, :to_i],
+      km_alveole_realise: [27, :to_f],
+      capacite_realisee: [28, :to_i],
+      distance_fo_prevue_km: [73, :to_f],
+      cana_lineaire_prevue: [217, :to_f],
+      cana_lineaire_realisee: [218, :to_f],
+      km_alveole_prevue: [74, :to_f],
+      distance_fo_posee_km: [83, :to_f],
+      acces_cuivre_raccordes: [241, :to_i],
+      acces_ftth_raccordes: [242, :to_i],
+      scenario: [253, :to_i],
+      splitter_1_8_client_engage: [262, :to_i],
+      budget_notifie: [267, :to_f],
+      date_achevement: [286, :to_s],
+      acces_cuivre_prevue: [288, :to_i],
+      acces_ftth_prevue: [289, :to_i],
+      commercialisable: [293, :to_i],
+      action: [367, :to_i]
+    }.freeze
 
     # =====================================================
     # 🔹 Catégories de projet
@@ -134,51 +273,15 @@ module ReportProject
     # Retourne un hash { état => { count: 0, quantity: 0 } }
     # Ce sera le “grand tableau” initialisé à zéro pour chaque tracker
   
-     def self.build_state_metrics
-       # Initialiser les champs de header à nil
-       header_hash = STATES_HEADER.index_with { nil }
-
-       # Initialiser les états avec metrics
-       states_hash = STATES_CORE.each_with_object({}) do |state, hash|
-        hash[state] = METRIC_FIELDS.index_with { 0 }
-       end
-
-      # Fusionner header + states
-      header_hash.merge(states_hash)
-   end
-
-
-    # =====================================================
-    # 🔹 Structure d’un tracker
-    # =====================================================
-    # Chaque tracker contient :
-    # - project_id
-    # - tracker_id
-    # - category (optionnelle)
-    # - position (optionnelle)
-    # - et les métriques pour tous les états initialisées à zéro
-    def self.build_tracker_struct(project_id:, tracker_id:, category: nil, position: nil)
-      {
-        project_id: project_id,
-        tracker_id: tracker_id,
-        category: category,
-        position: position
-      }.merge(build_state_metrics)
+    def self.build_state_metrics
+         STATES_CORE.each_with_object({}) do |state, states_hash|
+            states_hash[state] =  EXERCICES_TYPE.each_with_object({}) do |exercice, ex_hash|
+               ex_hash[exercice] = {count: 0, quantity: 0}
+             end
+         end
     end
 
-    # =====================================================
-    # 🔹 Structure complète du projet
-    # =====================================================
-    # Retourne un hash : tracker_id => tracker_struct
-    # Chaque projet contient tous les trackers initialisés
-    def self.build_project_struct(project_id)
-      TRACKERS.each_value.each_with_object({}) do |tracker_id, hash|
-        hash[tracker_id] = build_tracker_struct(
-          project_id: project_id,
-          tracker_id: tracker_id
-        )
-      end
-    end
+
 
   end
 end

@@ -1,7 +1,7 @@
 module ReportProject
   module ReportDataInit 
   # Module de generation de la structure de donnée commune pour les projets
-  def calculate_for_project(project_parent_id)
+  def self.calculate_for_project(project_parent_id)
 
     project = Project.find(project_parent_id)
     with_subprojects = Setting.display_subprojects_issues?
@@ -46,7 +46,7 @@ module ReportProject
   def self.build_report_data(project_parent_id)
   
     # Structure de base pour chaque état avec métriques à zéro
-    base_struct = ReportSchema.build_state_metrics
+    base_struct = ReportProject::ReportSchema.build_state_metrics
 
 
     # Récupération des issues déjà regroupées et optimisées
@@ -68,7 +68,7 @@ module ReportProject
           # Ici on applique la logique métier pour remplir tracker_struct
           # Par exemple, un pseudo-calcul selon status_id, done_ratio, scenario, etc.
         
-           synthese_data_issues(issue, tracker_struct)
+           ReportProject::Calculators::Dispatcher.process(issue, tracker_struct)
          end
 
       tracker_struct
