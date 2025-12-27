@@ -112,7 +112,9 @@
 
 <div class="tab-container">
   <div class="tab active" onclick="changeTab(event, 'tab1')">Acces filair</div>
+  <% if User.current.admin? %>
   <div class="tab" onclick="changeTab(event, 'tab2')">FTTH par DOT</div>
+<% end %>
   <div class="tab" onclick="changeTab(event, 'tab3')">Equipement Actif</div>
   <div class="tab" onclick="changeTab(event, 'tab6')">Liaisons FO</div>
   <div class="tab" onclick="changeTab(event, 'tab4')">Batiment</div>
@@ -124,7 +126,7 @@
 
 </div>
 
-
+<% if User.current.admin? %>
 <div id="tab2" class="tab-content">
 
     <div class="acces-filair">
@@ -139,6 +141,7 @@
     </div>
    
 </div>
+<% end %>
 
  <div id="tab3" class="tab-content">
    <h4>Realisation 4G </h4>

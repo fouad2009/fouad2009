@@ -29,36 +29,46 @@ module ReportProject
     # =====================================================
     # Chaque état représente une étape dans le processus projet/tracker.
     # Ces états seront utilisés pour initialiser la structure de chaque tracker.
-    
-     STATES_CORE = %i[
-          planned              # Action prévue (planifiée, non démarrée)
-          not_started          # Créée mais pas encore entamée
-          study_in_progress    # Étude en cours (APS / APD / faisabilité)
-          study_completed      # Étude finalisée / validée
-          consultation         # Phase de consultation / appel d’offres
-          committed            # Action engagée (marché / BC / décision validée)
-          in_progress          # Travaux / exécution en cours
-          completed            # Travaux / action réalisés
-          odn_completed        # ODN achevé / clôturé techniquement
-          sellable             # Infrastructure vendable / commercialisable
-          global_stop          # Arrêt global (blocage, suspension)
-          closed               # Action clôturée administrativement
-          site_preparation     # Préparation du site (autorisation, logistique)
-          site_validated       # Site validé et prêt (technique / administratif)
-          equipment_request    # Demande de dotation / équipement
-          installation_request # Demande d’installation
-          request_approved     # Demande approuvée (dotation / installation)
-          equipped             # Équipement livré / installé
-          installed            # Installation physique terminée
-          service_activated    # Mise en service (MES / activation)
-          in_operation         # En exploitation / en service
-          service_preparation  # Préparation de la prestation
-          service_committed    # Prestation engagée
-          service_execution    # Prestation en cours d’exécution
-          service_completed    # Prestation achevée
+   
+    STATES_CORE = [
+  :planned,              # Action prévue (planifiée, non démarrée)
+  :not_started,          # Créée mais pas encore entamée
+  :study_in_progress,    # Étude en cours (APS / APD / faisabilité)
+  :study_completed,      # Étude finalisée / validée
+  :consultation,         # Phase de consultation / appel d’offres
+  :committed,            # Action engagée (marché / BC / décision validée)
+  :in_progress,          # Travaux / exécution en cours
+  :completed,            # Travaux / action réalisés
+  :odn_completed,        # ODN achevé / clôturé techniquement
+  :sellable,             # Infrastructure vendable / commercialisable
+  :global_stop,          # Arrêt global (blocage, suspension)
+  :closed,               # Action clôturée administrativement
+
+  # --- Phase site ---
+  :site_preparation,     # Préparation du site (autorisation, logistique)
+  :site_validated,       # Site validé et prêt (technique / administratif)
+
+  # --- Équipement ---
+  :equipment_request,    # Demande de dotation / équipement
+  :installation_request, # Demande d’installation
+  :request_approved,     # Demande approuvée
+  :equipped,             # Équipement livré / installé
+  :installed,            # Installation physique terminée
+
+  # --- Service ---
+  :service_preparation,  # Préparation de la prestation
+  :service_committed,    # Prestation engagée
+  :service_execution,    # Prestation en cours d’exécution
+  :service_completed,    # Prestation achevée
+  :service_activated,    # Mise en service (MES / activation)
+  :in_operation          # En exploitation / en service
 ].freeze
 
-     # =====================================================
+
+
+
+
+        # =====================================================
      # 🔹 PARENTS PROJECTS
      # =====================================================
   
@@ -209,30 +219,32 @@ module ReportProject
     # =====================================================
     # 🔹 Custom Fields  Redmine
     # =====================================================
-      
-    CUSTOM_FIELDS_LIST = %i[
-     6        #-- Exercice
-     24       #-- Capacité accès ODN prévue
-     27       #-- Km/alvéole réalisé
-     28       #-- Capacité réalisée
-     73       #-- Dist- FO prévue KM
-     74       #-- Km/alvéole prévue
-     83       #-- Distance FO posée /KM
-     217      #-- Cana_Linéaire_Prévue
-     218      #-- Cana_Linéaire_Réalisée
-     241      #-- Accès_cuivre_raccordés
-     242      #-- Accés_FTTH_raccordés
-     253      #-- Scénario
-     262      #-- Spliter_1:8_Client_engagé
-     267      #-- Budget_notifié
-     286      #-- Date_achèvement
-     288      #-- Acces_cuivre_prevue
-     289      #-- Acces_FTTH_prévue
-     293      #-- Commercialisable
-     367      #-- Action 
-  ].freeze
+    
+CUSTOM_FIELDS_LIST = [
+  6,    # Exercice
+  24,   # Capacité accès ODN prévue
+  27,   # Km/alvéole réalisé
+  28,   # Capacité réalisée
+  73,   # Dist- FO prévue KM
+  74,   # Km/alvéole prévue
+  83,   # Distance FO posée / KM
+  217,  # Cana_Linéaire_Prévue
+  218,  # Cana_Linéaire_Réalisée
+  241,  # Accès cuivre raccordés
+  242,  # Accès FTTH raccordés
+  253,  # Scénario
+  262,  # Splitter 1:8 Client engagé
+  267,  # Budget notifié
+  286,  # Date achèvement
+  288,  # Accès cuivre prévu
+  289,  # Accès FTTH prévu
+  293,  # Commercialisable
+  367   # Action
+].freeze
 
-    CUSTOM_FIELDS_NAME = {
+
+
+        CUSTOM_FIELDS_NAME = {
       exercice: [6, :to_s],
       capacite_acces_odn_prevue: [24, :to_i],
       km_alveole_realise: [27, :to_f],

@@ -2,7 +2,7 @@ module ReportProject
   module ReportDataInit 
   # Module de generation de la structure de donnée commune pour les projets
   def self.calculate_for_project(project_parent_id)
-
+    User.current = User.admin.first if User.current.anonymous?
     project = Project.find(project_parent_id)
     with_subprojects = Setting.display_subprojects_issues?
     cond = project.project_condition(with_subprojects)
@@ -13,7 +13,7 @@ module ReportProject
                 .where(cond)
                 .where(tracker_id: tracker_ids)
                 .includes(:custom_values)
-                .where(custom_values: { custom_field_id: ReportSchema::CUSTOM_FIELDS_LIST })
+                .where(custom_values: { custom_field_id: ReportSchema::CUSTOM_FIELDS_LIST})
                 .pluck(:project_id, :id, :tracker_id, :status_id, :done_ratio, :estimated_hours,
                        'custom_values.custom_field_id', 'custom_values.value')
                 .map do |ligne|
@@ -41,6 +41,7 @@ module ReportProject
                     end
                end
     data
+  
   end
 
   def self.build_report_data(project_parent_id)
@@ -68,7 +69,7 @@ module ReportProject
           # Ici on applique la logique métier pour remplir tracker_struct
           # Par exemple, un pseudo-calcul selon status_id, done_ratio, scenario, etc.
         
-           ReportProject::Calculators::Dispatcher.process(issue, tracker_struct)
+           ReportProject::Dispatcher::Process.process(issue, tracker_struct)
          end
 
       tracker_struct
@@ -79,7 +80,7 @@ module ReportProject
 end
 
 
-  end
+end
 end
 
 

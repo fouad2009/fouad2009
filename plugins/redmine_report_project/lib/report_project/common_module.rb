@@ -1,6 +1,6 @@
 module ReportProject
-  module Calculators
-    class Odn < Base
+  module CommonModule
+    class  Common < ReportProject::BaseClass::Base
       def self.process(issue, tracker_struct)
         super  # 🔹 logique commune
 

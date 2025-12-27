@@ -1,10 +1,9 @@
 module ReportProject
-  module Calculators
-    class Olt < Base
+  module ApdModule
+    class Apd < ReportProject::BaseClass::Base
       def self.process(issue, tracker_struct)
         super  # 🔹 logique commune
 
-        
       end
     end
   end
