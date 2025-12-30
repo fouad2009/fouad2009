@@ -244,27 +244,13 @@ CUSTOM_FIELDS_LIST = [
 
 
 
-        CUSTOM_FIELDS_NAME = {
-      exercice: [6, :to_s],
-      capacite_acces_odn_prevue: [24, :to_i],
-      km_alveole_realise: [27, :to_f],
-      capacite_realisee: [28, :to_i],
-      distance_fo_prevue_km: [73, :to_f],
-      cana_lineaire_prevue: [217, :to_f],
-      cana_lineaire_realisee: [218, :to_f],
-      km_alveole_prevue: [74, :to_f],
-      distance_fo_posee_km: [83, :to_f],
-      acces_cuivre_raccordes: [241, :to_i],
-      acces_ftth_raccordes: [242, :to_i],
-      scenario: [253, :to_i],
-      splitter_1_8_client_engage: [262, :to_i],
-      budget_notifie: [267, :to_f],
-      date_achevement: [286, :to_s],
-      acces_cuivre_prevue: [288, :to_i],
-      acces_ftth_prevue: [289, :to_i],
-      commercialisable: [293, :to_i],
-      action: [367, :to_i]
-    }.freeze
+  CUSTOM_FIELDS_NAME = 
+      CUSTOM_FIELDS_CONFIG[:custom_fields].each_with_object({}) do |(name, cfg), h|
+        h[name.to_sym] = [
+          cfg[:id],
+          cfg[:cast].to_sym 
+          ]
+       end.freeze
 
     # =====================================================
     # 🔹 Catégories de projet

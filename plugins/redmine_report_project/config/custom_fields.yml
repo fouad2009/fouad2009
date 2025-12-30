@@ -1,0 +1,77 @@
+custom_fields:
+  exercice:
+    id: 6
+    cast: to_s
+
+  capacite_acces_odn_prevue:
+    id: 24
+    cast: to_i
+
+  km_alveole_realise:
+    id: 27
+    cast: to_f
+
+  capacite_realisee:
+    id: 28
+    cast: to_i
+
+  distance_fo_prevue_km:
+    id: 73
+    cast: to_f
+
+  cana_lineaire_prevue:
+    id: 217
+    cast: to_f
+
+  cana_lineaire_realisee:
+    id: 218
+    cast: to_f
+
+  km_alveole_prevue:
+    id: 74
+    cast: to_f
+
+  distance_fo_posee_km:
+    id: 83
+    cast: to_f
+
+  acces_cuivre_raccordes:
+    id: 241
+    cast: to_i
+
+  acces_ftth_raccordes:
+    id: 242
+    cast: to_i
+
+  scenario:
+    id: 253
+    cast: to_i
+
+  splitter_1_8_client_engage:
+    id: 262
+    cast: to_i
+
+  budget_notifie:
+    id: 267
+    cast: to_f
+
+  date_achevement:
+    id: 286
+    cast: to_s
+
+  acces_cuivre_prevue:
+    id: 288
+    cast: to_i
+
+  acces_ftth_prevue:
+    id: 289
+    cast: to_i
+
+  commercialisable:
+    id: 293
+    cast: to_i
+
+  action:
+    id: 367
+    cast: to_i
+
