@@ -1,1 +1,14 @@
+actions:
+  aps:
+    INITIALISATION:
+      ratio:
+        "<100": ""
+        "=100": ""
+        "nean": reference
+
+    EN_PROGRESSION:
+      ratio:
+        "<100": capacity_engager
+        "=100": capacity_realise
+        "nean": ""
 
