@@ -3,8 +3,6 @@
 module ReportProject
   module ReportSchema
 
-    
-
      # =====================================================
      # 🔹 Type Exercice 
      # =====================================================
@@ -65,68 +63,100 @@ module ReportProject
 ].freeze
 
 
-
-
-
-        # =====================================================
-     # 🔹 PARENTS PROJECTS
-     # =====================================================
+ # =====================================================
+ # 🔹 PARENTS PROJECTS
+ # =====================================================
   
      PARENT_PROJECT = { DO_2019: 1, DO_2020: 2, DO_2021: 3, DO_2022: 4, DO_2023: 5,
                         DO_2024: 6, DO_2025: 7, DO_2026: 8,DG_PA: 10
                       } 
 
-     
+# ====================== orkflow par statuts ===============================
+    
 # ===============================
-    # 🔹 ÉTAPES GÉNÉRALES
-    # ===============================
-    INITIALISATION          = 1
-    SITE_SURVEY             = 70
-    PLAN_SCHEMA             = 76
-    DEVIS                   = 77
-    APD_SIGNE_VALIDE        = 78
-    EN_REALISATION          = 71
-    ACHEVE                  = 65
+    # 🔹 Statut commun
+# ===============================
+    INITIALISATION          = 1 # tous sauf ODN_prestation, Extenstion 4G, OLT
+# ===============================
+
+# ===============================
+#   Action   APS 
+# ===============================
     ZONAGE                  = 66
     POINTAGE                = 47
     NOTE_CALCULE            = 60
     BOQ                     = 67
     EN_SIGNATURE            = 68
-
-    # ===============================
-    # 🔹 APS / DIR / DO
-    # ===============================
-    APS_APPROUVE_DIRA       = 64
+    APS_APPROUVE_DO         = 56
     SOUS_RESERVE_DIRA       = 45
     RESERVE_DIRA_LEVEE      = 88
-    APS_APPROUVE_DO         = 56
+    APS_APPROUVE_DIRA       = 64
+    BESOIN_EXPRIME          = 69
+
+
+# ===================================
+#   Action Cité_DEV & Cité_Mod 
+# ===================================
+    
+    SITE_SURVEY             = 70
+    PLAN_SCHEMA             = 76
+    DEVIS                   = 77
+    APD_SIGNE_VALIDE        = 78
+
+# ========================================
+#   Actions 4G OLT & Extension Carte GPON
+# =======================================
+  ETUDE_RADIO             = 51 # statut 4G
+  ETUDE_RADIO_VALIDEE     = 52 # statut 4G
+  ETUDE_RADIO_NON_VALIDEE = 72 # statut 4G
+  ETUDE_TSSR              = 53 # statut 4G
+  ETUDE_TSSR_VALIDEE      = 54 # statut 4G
+  AUTORISATION            = 58 # statut 4G, Canalisation,Pose FO, Pose FO Corporate
+  AUTORISATION_ACCORDEE   = 79 # statut 4G
+  PREPARATION_SITE        = 55 # statut OLT & 4G
+  SITE_PRET               = 80 # statut 4G
+  DEMANDE_DOTATION        = 49
+  DOTATION_VALIDEE        = 50
+  DOTER                   = 39 # statut OLT & Extenstion cartes GPON
+  DEMANDE_INSTALLATION    = 74 # statut 4G
+  INSTALLATION_ACCORDEE   = 75 # statut 4G
+  INSTALLE                = 40
+  MES                     = 41
+  PRET_A_L_EXPLOITATION   = 57
+
+# ========================================
+#   Actions PRESTATION : 
+#   Canalisation,Pose FO,Pose FO Coporate, ODN_prestation, Dépose_câble, 
+#   Raccordement_client, Abris,Enegie primaire,socle 4G,Pylone,Mat
+# =======================================
+
+  # INITIALISATION
+  PHASE_ETUDE             = 2
+  PHASE_CONSULTATION      = 3
+  PRET_AU_LANCEMENT       = 42
+  # AUTORISATION : Canalisation et Pose FO,Pose FO Corporate
+  DEBUT_EXECUTION         = 4
+  EN_PROGRESSION          = 5
+  EN_DIFFICULTE           = 6 
+  A_L_ARRET               = 7
+  TRAVAUX_ACHÈVES         = 61
+  SERVICE_FAIT            = 9
+  EN_TRAITEMENT           = 10
+  PAIEMENT_SOUS_RESERVE   = 11
+  PAIEMENT_VALIDE         = 12
+  FINALISEE               = 46
+  CLOTURE                = 13
+
+
+    
+    EN_REALISATION          = 71
+    ACHEVE    = 65
 
     # ===============================
     # 🔹 PHASES PROJET
     # ===============================
-    BESOIN_EXPRIME          = 69
-    PHASE_ETUDE             = 2
-    PHASE_CONSULTATION      = 3
-    PRET_AU_LANCEMENT       = 42
     EN_EXECUTION            = 105
     RECEPTIONNE             = 107
-
-    # ===============================
-    # 🔹 ÉTUDES TECHNIQUES
-    # ===============================
-    ETUDE_RADIO             = 51
-    ETUDE_RADIO_VALIDEE     = 52
-    ETUDE_RADIO_NON_VALIDEE = 72
-    ETUDE_TSSR              = 53
-    ETUDE_TSSR_VALIDEE      = 54
-
-    # ===============================
-    # 🔹 AUTORISATIONS / SITE
-    # ===============================
-    AUTORISATION            = 58
-    AUTORISATION_ACCORDEE   = 79
-    PREPARATION_SITE        = 55
-    SITE_PRET               = 80
 
     # ===============================
     # 🔹 DEMANDES / VALIDATIONS
@@ -134,44 +164,9 @@ module ReportProject
     DEMANDE                 = 48
     VALIDE                  = 43
     PROGRAMME               = 44
-    DEMANDE_DOTATION        = 49
-    DOTATION_VALIDEE        = 50
     DEMANDE_TRANSFERT       = 59
     TRANSFERT_VALIDE        = 62
-    DEMANDE_INSTALLATION    = 74
-    INSTALLATION_ACCORDEE   = 75
-
-    # ===============================
-    # 🔹 EXÉCUTION TRAVAUX PRESTATION
-    # ===============================
-    DEBUT_EXECUTION         = 4
-    EN_PROGRESSION          = 5
-    EN_DIFFICULTE           = 6
-    A_L_ARRET               = 7
-    
-    # ===============================
-    # 🔹 ACHEVEMENT PRESTATAION 
-    # ===============================
-    TRAVAUX_ACHÈVES         = 61
-    SERVICE_FAIT            = 9
-
-    # ===============================
-    # 🔹 PHASE PAIEMENT PRESTATAION 
-    # ===============================
-    EN_TRAITEMENT           = 10
-    PAIEMENT_SOUS_RESERVE   = 11
-    PAIEMENT_VALIDE         = 12
-    FINALISEE               = 46
-    CLOTURE                = 13
-    # ===============================
-    # 🔹 MISE EN SERVICE
-    # ===============================
-    DOTE                    = 39
-    INSTALLE                = 40
-    MES                     = 41
-    PRET_A_L_EXPLOITATION   = 57
    
-
     # ===============================
     # 🔹 PROSPECTION / PA
     # ===============================
@@ -278,6 +273,10 @@ CUSTOM_FIELDS_LIST = [
              end
          end
     end
+
+  end
+end
+
 
 
 
