@@ -1,14 +1,99 @@
 actions:
   aps:
+    DEFAULT:
+      state: planned
+       ratio:
+        "nean": 
+          -nbr
     INITIALISATION:
-      ratio:
-        "<100": ""
-        "=100": ""
-        "nean": reference
+      state: not_started
+       ratio:
+        "nean": 
+          -nbr
+    ZONAGE:
+      state: study_in_progress
+        ratio:
+          "nean"
+            -nbr                  
+    POINTAGE:
+       state: study_in_progress
+        ratio:
+          "nean"
+            -nbr                  
+    NOTE_CALCULE:
+     state: study_in_progress
+        ratio:
+          "nean"
+            -nbr               
+    BOQ:
+     state: study_in_progress
+        ratio:
+          "nean"
+            -nbr                        
+    EN_SIGNATURE:
+    state: study_in_progress
+        ratio:
+          "nean"
+            -nbr               
+    APS_APPROUVE_DO:
+     state: study_in_progress
+        ratio:
+          "nean"
+            -nbr            
+    SOUS_RESERVE_DIRA: 
+     state: study_in_progress
+        ratio:
+          "nean"
+            -nbr         
+    RESERVE_DIRA_LEVEE:
+     state: study_in_progress
+        ratio:
+          "nean"
+            -nbr         
+    APS_APPROUVE_DIRA:
+     state: study_completed
+        ratio:
+          "nean"
+            -nbr
 
-    EN_PROGRESSION:
-      ratio:
+    BESOIN_EXPRIME:
+     state: study_completed
+        ratio:
+          "nean"
+            -nbr          
+
         "<100": capacity_engager
         "=100": capacity_realise
         "nean": ""
 
+ apd:
+   DEFAULT:
+      state: planned
+       ratio:
+        "nean": 
+          -capacite_acces_odn_prevue
+   INITIALISATION:
+      state: not_started
+       ratio:
+        "nean": 
+          -capacite_acces_odn_prevue
+   SITE_SURVEY:
+     state: not_started
+       ratio:
+        "nean": 
+          -capacite_acces_odn_prevue           
+   PLAN_SCHEMA:
+     state: not_started
+       ratio:
+        "nean": 
+          -capacite_acces_odn_prevue            
+   DEVIS:
+     state: not_started
+       ratio:
+        "nean": 
+          -capacite_acces_odn_prevue                  
+   APD_SIGNE_VALIDE:
+    state: not_started
+       ratio:
+        "nean": 
+          -capacite_acces_odn_prevue      
