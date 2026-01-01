@@ -1,7 +1,7 @@
-actions:
- # config/actions.yml
-
- common_fields:
+# =========================
+# Champs communs (anchors)
+# =========================
+common_fields:
   prestation_fields: &prestation_fields
     odn_service: capacite_acces_odn_prevue
     canalisation: distance_fo_prevue_km
@@ -9,107 +9,124 @@ actions:
     corporate_fo: distance_fo_prevue_km
     reservation_fo: distance_fo_prevue_km
     default: nbr
- aps:
-  class: Aps
 
-  DEFAULT:
-    state: planned
-    field: nbr
+# =========================
+# Actions / Trackers
+# =========================
+actions:
 
-  INITIALISATION:
-    state: not_started
-    field: nbr
+  # ---------
+  # APS
+  # ---------
+  aps:
+    class: Aps
 
-  ZONAGE:
-    state: study_in_progress
-    field: nbr
+    DEFAULT:
+      state: planned
+      field: nbr
 
-  POINTAGE:
-    state: study_in_progress
-    field: nbr
+    INITIALISATION:
+      state: not_started
+      field: nbr
 
-  NOTE_CALCULE:
-    state: study_in_progress
-    field: nbr
+    ZONAGE:
+      state: study_in_progress
+      field: nbr
 
-  BOQ:
-    state: study_in_progress
-    field: nbr
+    POINTAGE:
+      state: study_in_progress
+      field: nbr
 
-  EN_SIGNATURE:
-    state: study_in_progress
-    field: nbr
+    NOTE_CALCULE:
+      state: study_in_progress
+      field: nbr
 
-  APS_APPROUVE_DO:
-    state: study_in_progress
-    field: nbr
+    BOQ:
+      state: study_in_progress
+      field: nbr
 
-  SOUS_RESERVE_DIRA:
-    state: study_in_progress
-    field: nbr
+    EN_SIGNATURE:
+      state: study_in_progress
+      field: nbr
 
-  RESERVE_DIRA_LEVEE:
-    state: study_in_progress
-    field: nbr
+    APS_APPROUVE_DO:
+      state: study_in_progress
+      field: nbr
 
-  APS_APPROUVE_DIRA:
-    state: study_completed
-    field: nbr
+    SOUS_RESERVE_DIRA:
+      state: study_in_progress
+      field: nbr
 
-  BESOIN_EXPRIME:
-    state: study_completed
-    field: nbr
- apd:
-  class: Apd
+    RESERVE_DIRA_LEVEE:
+      state: study_in_progress
+      field: nbr
 
-  DEFAULT:
-    state: planned
-    field: capacite_acces_odn_prevue
+    APS_APPROUVE_DIRA:
+      state: study_completed
+      field: nbr
 
-  INITIALISATION:
-    state: not_started
-    field: capacite_acces_odn_prevue
+    BESOIN_EXPRIME:
+      state: study_completed
+      field: nbr
 
-  SITE_SURVEY:
-    state: study_in_progress
-    field: capacite_acces_odn_prevue
+  # ---------
+  # APD
+  # ---------
+  apd:
+    class: Apd
 
-  PLAN_SCHEMA:
-    state: study_in_progress
-    field: capacite_acces_odn_prevue
+    DEFAULT:
+      state: planned
+      field: capacite_acces_odn_prevue
 
-  DEVIS:
-    state: study_in_progress
-    field: capacite_acces_odn_prevue
+    INITIALISATION:
+      state: not_started
+      field: capacite_acces_odn_prevue
 
-  APD_SIGNE_VALIDE:
-    state: study_completed
-    field: capacite_acces_odn_prevue
-prestation:
-  class: Prestation
+    SITE_SURVEY:
+      state: study_in_progress
+      field: capacite_acces_odn_prevue
 
-  DEFAULT:
-    state: planned
-    field_map: *prestation_fields
+    PLAN_SCHEMA:
+      state: study_in_progress
+      field: capacite_acces_odn_prevue
 
-  INITIALISATION:
-    state: not_started
-    field_map: *prestation_fields
+    DEVIS:
+      state: study_in_progress
+      field: capacite_acces_odn_prevue
 
-  PHASE_ETUDE:
-    cases:
-      - when:
-          ratio:
-            lt: 100
-        state: study_in_progress
-        field_map: *prestation_fields
+    APD_SIGNE_VALIDE:
+      state: study_completed
+      field: capacite_acces_odn_prevue
 
-      - when:
-          ratio:
-            eq: 100
-        state: study_completed
-        field_map: *prestation_fields
+  # --------------
+  # PRESTATION
+  # --------------
+  prestation:
+    class: Prestation
 
-  PHASE_CONSULTATION:
-    state: not_started
-    field_map: *prestation_fields
+    DEFAULT:
+      state: planned
+      field_map: *prestation_fields
+
+    INITIALISATION:
+      state: not_started
+      field_map: *prestation_fields
+
+    PHASE_ETUDE:
+      cases:
+        - when:
+            ratio:
+              lt: 100
+          state: study_in_progress
+          field_map: *prestation_fields
+
+        - when:
+            ratio:
+              eq: 100
+          state: study_completed
+          field_map: *prestation_fields
+
+    PHASE_CONSULTATION:
+      state: not_started
+      field_map: *prestation_fields
