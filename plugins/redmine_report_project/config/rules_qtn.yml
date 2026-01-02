@@ -1,6 +1,5 @@
-# =========================
-# Champs communs
-# =========================
+# config/rules_qtn.yml
+
 common_fields:
   planned_fields: &planned_fields
     odn_service: capacite_acces_odn_prevue
@@ -18,12 +17,11 @@ common_fields:
     reservation_fo: distance_fo_prevue_km
     default: nbr
 
-# =========================
-# PRESTATION
-# =========================
+# ===================================
+# 🔹 PRESTATION
+# ===================================
 prestation:
   class: Prestation
-
   DEFAULT:
     state: planned
     field_map: *planned_fields
@@ -35,14 +33,11 @@ prestation:
   PHASE_ETUDE:
     cases:
       - when:
-          ratio:
-            lt: 100
+          ratio: lower_100
         state: study_in_progress
         field_map: *planned_fields
-
       - when:
-          ratio:
-            eq: 100
+          ratio: equal_100
         state: study_completed
         field_map: *planned_fields
 
@@ -69,28 +64,22 @@ prestation:
   EN_DIFFICULTE:
     cases:
       - when:
-          ratio:
-            lt: 100
+          ratio: lower_100
         state: in_progress
         field_map: *planned_fields
-
       - when:
-          ratio:
-            eq: 100
+          ratio: equal_100
         state: completed
         field_map: *completed_fields
 
   EN_PROGRESSION:
     cases:
       - when:
-          ratio:
-            lt: 100
+          ratio: lower_100
         state: in_progress
         field_map: *planned_fields
-
       - when:
-          ratio:
-            eq: 100
+          ratio: equal_100
         state: completed
         field_map: *completed_fields
 
