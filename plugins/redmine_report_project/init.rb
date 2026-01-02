@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 Redmine::Plugin.register :redmine_report_project do
   name 'Redmine Report Project plugin'
   author 'Author name'
@@ -9,19 +11,40 @@ end
 
 plugin_root = File.expand_path(__dir__)
 
+# --------------------------
+# Méthode pour charger YAML
+# --------------------------
 def load_yaml_config(path)
-  YAML.safe_load(
+  yaml = YAML.safe_load(
     File.read(path),
     permitted_classes: [Symbol],
     aliases: true
-  ).with_indifferent_access.freeze
+  )
+
+  # Convertir toutes les clés récursivement en symboles
+  deep_symbolize_keys(yaml).freeze
 end
 
-CUSTOM_FIELDS_CONFIG =
-  load_yaml_config(File.join(plugin_root, 'config', 'custom_fields.yml'))
+# --------------------------
+# Méthode récursive de conversion
+# --------------------------
+def deep_symbolize_keys(obj)
+  case obj
+  when Hash
+    obj.each_with_object({}) do |(k, v), h|
+      key = k.is_a?(String) ? k.to_sym : k
+      h[key] = deep_symbolize_keys(v)
+    end
+  when Array
+    obj.map { |v| deep_symbolize_keys(v) }
+  else
+    obj
+  end
+end
 
-RULES_NBR_CONFIG =
-  load_yaml_config(File.join(plugin_root, 'config', 'rules_nbr.yml'))
-
-RULES_QTN_CONFIG =
-  load_yaml_config(File.join(plugin_root, 'config', 'rules_qtn.yml'))
+# --------------------------
+# Chargement des configurations
+# --------------------------
+CUSTOM_FIELDS_CONFIG = load_yaml_config(File.join(plugin_root, 'config', 'custom_fields.yml'))
+RULES_NBR_CONFIG    = load_yaml_config(File.join(plugin_root, 'config', 'rules_nbr.yml'))
+RULES_QTN_CONFIG    = load_yaml_config(File.join(plugin_root, 'config', 'rules_qtn.yml'))
