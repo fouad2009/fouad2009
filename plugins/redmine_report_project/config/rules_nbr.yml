@@ -1,14 +1,3 @@
-# =========================
-# Champs communs (anchors)
-# =========================
-common_fields:
-  prestation_fields: &prestation_fields
-    odn_service: capacite_acces_odn_prevue
-    canalisation: distance_fo_prevue_km
-    pose_fo: distance_fo_prevue_km
-    corporate_fo: distance_fo_prevue_km
-    reservation_fo: distance_fo_prevue_km
-    default: nbr
 
 # =========================
 # Actions / Trackers
@@ -99,34 +88,3 @@ actions:
       state: study_completed
       field: capacite_acces_odn_prevue
 
-  # --------------
-  # PRESTATION
-  # --------------
-  prestation:
-    class: Prestation
-
-    DEFAULT:
-      state: planned
-      field_map: *prestation_fields
-
-    INITIALISATION:
-      state: not_started
-      field_map: *prestation_fields
-
-    PHASE_ETUDE:
-      cases:
-        - when:
-            ratio:
-              lt: 100
-          state: study_in_progress
-          field_map: *prestation_fields
-
-        - when:
-            ratio:
-              eq: 100
-          state: study_completed
-          field_map: *prestation_fields
-
-    PHASE_CONSULTATION:
-      state: not_started
-      field_map: *prestation_fields

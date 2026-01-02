@@ -1,0 +1,124 @@
+# =========================
+# Champs communs (anchors)
+# =========================
+common_fields:
+  prestation_fields: &planned_fields
+    odn_service: capacite_acces_odn_prevue
+    canalisation: distance_fo_prevue_km
+    pose_fo: distance_fo_prevue_km
+    corporate_fo: distance_fo_prevue_km
+    reservation_fo: distance_fo_prevue_km
+    default: nbr
+
+  prestation_fields: &completed_fields
+    odn_service: capacite_acces_odn_prevue
+    canalisation: distance_fo_prevue_km
+    pose_fo: distance_fo_prevue_km
+    corporate_fo: distance_fo_prevue_km
+    reservation_fo: distance_fo_prevue_km
+    default: nbr
+
+  # --------------
+  # PRESTATION
+  # --------------
+  prestation:
+    class: Prestation
+
+    DEFAULT:
+      state: planned
+      field_map: *planned_fields
+
+    INITIALISATION:
+      state: not_started
+      field_map: *planned_fields
+
+    PHASE_ETUDE:
+      cases:
+        - when:
+            ratio:
+              lt: 100
+          state: study_in_progress
+          field_map: *planned_fields
+        - when:
+            ratio:
+              eq: 100
+          state: study_completed
+          field_map: *planned_fields
+
+    PHASE_CONSULTATION:
+      state: consultation
+      field_map: *planned_fields
+
+    PHASE_RET_AU_LANCEMENT:
+      state: committe
+      field_map: *planned_fields
+  
+    AUTORISATION:
+      state: committe
+      field_map: *planned_fields
+     
+    AUTORISATION:
+      state: committe
+      field_map: *planned_fields
+
+    DEBUT_EXECUTION:
+      state: in_progress
+      field_map: *planned_fields
+    
+    A_L_ARRET:
+      state: global_stop
+      field_map: *planned_fields
+
+    EN_DIFFICULTE:
+      cases:
+        - when:
+            ratio:
+              lt: 100
+          state: in_progress
+          field_map: *planned_fields
+
+        - when:
+            ratio:
+              eq: 100
+          state: completed
+          field_map: *completed_fields
+
+    EN_PROGRESSION:
+      cases:
+        - when:
+            ratio:
+              lt: 100
+          state: in_progress
+          field_map: *planned_fields
+
+        - when:
+            ratio:
+              eq: 100
+          state: completed
+          field_map: *completed_fields
+
+    TRAVAUX_ACHEVES:
+      state: odn_completed
+      field_map: *completed_fields
+
+    SERVICE_FAIT:
+      state: odn_completed
+      field_map: *completed_fields
+
+    EN_TRAITEMENT:
+      state: odn_completed
+      field_map: *completed_fields
+
+    PAIEMENT_SOUS_RESERVE:
+      state: odn_completed
+      field_map: *completed_fields
+
+    PAIEMENT_VALIDE:
+      state: odn_completed
+      field_map: *completed_fields
+
+    CLOTURE:
+      state: closed
+      field_map: *completed_fields
+
+   

@@ -139,7 +139,7 @@ module ReportProject
   EN_PROGRESSION          = 5
   EN_DIFFICULTE           = 6 
   A_L_ARRET               = 7
-  TRAVAUX_ACHÈVES         = 61
+  TRAVAUX_ACHEVES         = 61
   SERVICE_FAIT            = 9
   EN_TRAITEMENT           = 10
   PAIEMENT_SOUS_RESERVE   = 11
