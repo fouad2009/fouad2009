@@ -4,8 +4,6 @@ common_fields:
   planned_fields: &planned_fields
     odn_service: capacite_acces_odn_prevue
     canalisation: distance_fo_prevue_km
-    pose_fo: distance_fo_prevue_km
-    corporate_fo: distance_fo_prevue_km
     reservation_fo: distance_fo_prevue_km
     default: nbr
 
