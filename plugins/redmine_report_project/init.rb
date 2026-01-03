@@ -37,6 +37,8 @@ def deep_symbolize_keys(obj)
     end
   when Array
     obj.map { |v| deep_symbolize_keys(v) }
+  when String
+    obj.to_sym
   else
     obj
   end

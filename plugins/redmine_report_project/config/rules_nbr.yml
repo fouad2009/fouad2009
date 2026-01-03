@@ -12,51 +12,51 @@ actions:
 
     DEFAULT:
       state: planned
-      field: nbr
+      field: count
 
     INITIALISATION:
       state: not_started
-      field: nbr
+      field: count
 
     ZONAGE:
       state: study_in_progress
-      field: nbr
+      field: count
 
     POINTAGE:
       state: study_in_progress
-      field: nbr
+      field: count
 
     NOTE_CALCULE:
       state: study_in_progress
-      field: nbr
+      field: count
 
     BOQ:
       state: study_in_progress
-      field: nbr
+      field: count
 
     EN_SIGNATURE:
       state: study_in_progress
-      field: nbr
+      field: count
 
     APS_APPROUVE_DO:
       state: study_in_progress
-      field: nbr
+      field: count
 
     SOUS_RESERVE_DIRA:
       state: study_in_progress
-      field: nbr
+      field: count
 
     RESERVE_DIRA_LEVEE:
       state: study_in_progress
-      field: nbr
+      field: count
 
     APS_APPROUVE_DIRA:
       state: study_completed
-      field: nbr
+      field: count
 
     BESOIN_EXPRIME:
       state: study_completed
-      field: nbr
+      field: count
 
   # ---------
   # APD
