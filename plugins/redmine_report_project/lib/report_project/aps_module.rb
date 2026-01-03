@@ -8,7 +8,7 @@ module ReportProject
       # Methodes de traitement par action 
       # =========================
 
-        config_aps = RULES_NBR_CONFIG[:action][:aps]
+        config_aps = RULES_NBR_CONFIG[:actions][:aps]
 
         if data[:tracker_id] == 29  # meme deja dispatcher a filtrer l'envoi selon le type tracker_id , appliqué un deuxiem  filtre
 
