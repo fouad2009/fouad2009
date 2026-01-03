@@ -8,11 +8,11 @@ module ReportProject
       # Methodes de traitement par action 
       # =========================
       
-    status = STATUSES[issue[:status_id]]
+    status = STATUSES[data[:status_id]]
     
     config_aps = RULES_NBR_CONFIG[:actions][:aps] 
     
-    if issue[:tracker_id] == 29 # meme deja dispatcher a filtrer l'envoi selon le type tracker_id , appliqué un deuxiem filtre 
+    if data[:tracker_id] == 29 # meme deja dispatcher a filtrer l'envoi selon le type tracker_id , appliqué un deuxiem filtre 
        
             state =   config_aps[status][:state] 
             field =   config_aps[status][:field]
