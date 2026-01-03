@@ -8,8 +8,7 @@ actions:
   # APS
   # ---------
   aps:
-    class: Aps
-
+    
     DEFAULT:
       state: planned
       field: count
