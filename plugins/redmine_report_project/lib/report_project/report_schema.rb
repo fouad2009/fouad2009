@@ -72,144 +72,135 @@ module ReportProject
                       } 
 
 # ====================== orkflow par statuts ===============================
-    
-# ===============================
+    STATUSES = {
+    # ===============================
     # 🔹 Statut commun
-# ===============================
-    INITIALISATION          = 1 # tous sauf ODN_prestation, Extenstion 4G, OLT
-# ===============================
-
-# ===============================
-#   Action   APS 
-# ===============================
-    ZONAGE                  = 66
-    POINTAGE                = 47
-    NOTE_CALCULE            = 60
-    BOQ                     = 67
-    EN_SIGNATURE            = 68
-    APS_APPROUVE_DO         = 56
-    SOUS_RESERVE_DIRA       = 45
-    RESERVE_DIRA_LEVEE      = 88
-    APS_APPROUVE_DIRA       = 64
-    BESOIN_EXPRIME          = 69
-
-
-# ===================================
-#   Action Cité_DEV & Cité_Mod 
-# ===================================
-    
-    SITE_SURVEY             = 70
-    PLAN_SCHEMA             = 76
-    DEVIS                   = 77
-    APD_SIGNE_VALIDE        = 78
-
-# ========================================
-#   Actions 4G OLT & Extension Carte GPON
-# =======================================
-  ETUDE_RADIO             = 51 # statut 4G
-  ETUDE_RADIO_VALIDEE     = 52 # statut 4G
-  ETUDE_RADIO_NON_VALIDEE = 72 # statut 4G
-  ETUDE_TSSR              = 53 # statut 4G
-  ETUDE_TSSR_VALIDEE      = 54 # statut 4G
-  AUTORISATION            = 58 # statut 4G, Canalisation,Pose FO, Pose FO Corporate
-  AUTORISATION_ACCORDEE   = 79 # statut 4G
-  PREPARATION_SITE        = 55 # statut OLT & 4G
-  SITE_PRET               = 80 # statut 4G
-  DEMANDE_DOTATION        = 49
-  DOTATION_VALIDEE        = 50
-  DOTER                   = 39 # statut OLT & Extenstion cartes GPON
-  DEMANDE_INSTALLATION    = 74 # statut 4G
-  INSTALLATION_ACCORDEE   = 75 # statut 4G
-  INSTALLE                = 40
-  MES                     = 41
-  PRET_A_L_EXPLOITATION   = 57
-
-# ========================================
-#   Actions PRESTATION : 
-#   Canalisation,Pose FO,Pose FO Coporate, ODN_prestation, Dépose_câble, 
-#   Raccordement_client, Abris,Enegie primaire,socle 4G,Pylone,Mat
-# =======================================
-
-  # INITIALISATION
-  PHASE_ETUDE             = 2
-  PHASE_CONSULTATION      = 3
-  PRET_AU_LANCEMENT       = 42
-  # AUTORISATION : Canalisation et Pose FO,Pose FO Corporate
-  DEBUT_EXECUTION         = 4
-  EN_PROGRESSION          = 5
-  EN_DIFFICULTE           = 6 
-  A_L_ARRET               = 7
-  TRAVAUX_ACHEVES         = 61
-  SERVICE_FAIT            = 9
-  EN_TRAITEMENT           = 10
-  PAIEMENT_SOUS_RESERVE   = 11
-  PAIEMENT_VALIDE         = 12
-  FINALISEE               = 46
-  CLOTURE                = 13
-
-
-    
-    EN_REALISATION          = 71
-    ACHEVE    = 65
+    # ===============================
+    1   => :INITIALISATION,
 
     # ===============================
-    # 🔹 PHASES PROJET
+    # 🔹 Actions APS
     # ===============================
-    EN_EXECUTION            = 105
-    RECEPTIONNE             = 107
+    66  => :ZONAGE,
+    47  => :POINTAGE,
+    60  => :NOTE_CALCULE,
+    67  => :BOQ,
+    68  => :EN_SIGNATURE,
+    56  => :APS_APPROUVE_DO,
+    45  => :SOUS_RESERVE_DIRA,
+    88  => :RESERVE_DIRA_LEVEE,
+    64  => :APS_APPROUVE_DIRA,
+    69  => :BESOIN_EXPRIME,
+
+    # ===================================
+    # 🔹 Cité_DEV & Cité_Mod
+    # ===================================
+    70  => :SITE_SURVEY,
+    76  => :PLAN_SCHEMA,
+    77  => :DEVIS,
+    78  => :APD_SIGNE_VALIDE,
+
+    # ========================================
+    # 🔹 4G / OLT / Extension GPON
+    # ========================================
+    51  => :ETUDE_RADIO,
+    52  => :ETUDE_RADIO_VALIDEE,
+    72  => :ETUDE_RADIO_NON_VALIDEE,
+    53  => :ETUDE_TSSR,
+    54  => :ETUDE_TSSR_VALIDEE,
+    58  => :AUTORISATION,
+    79  => :AUTORISATION_ACCORDEE,
+    55  => :PREPARATION_SITE,
+    80  => :SITE_PRET,
+    49  => :DEMANDE_DOTATION,
+    50  => :DOTATION_VALIDEE,
+    39  => :DOTER,
+    74  => :DEMANDE_INSTALLATION,
+    75  => :INSTALLATION_ACCORDEE,
+    40  => :INSTALLE,
+    41  => :MES,
+    57  => :PRET_A_L_EXPLOITATION,
+
+    # ========================================
+    # 🔹 PRESTATION
+    # ========================================
+    2   => :PHASE_ETUDE,
+    3   => :PHASE_CONSULTATION,
+    42  => :PRET_AU_LANCEMENT,
+    4   => :DEBUT_EXECUTION,
+    5   => :EN_PROGRESSION,
+    6   => :EN_DIFFICULTE,
+    7   => :A_L_ARRET,
+    61  => :TRAVAUX_ACHEVES,
+    9   => :SERVICE_FAIT,
+    10  => :EN_TRAITEMENT,
+    11  => :PAIEMENT_SOUS_RESERVE,
+    12  => :PAIEMENT_VALIDE,
+    46  => :FINALISEE,
+    13  => :CLOTURE,
+
+    71  => :EN_REALISATION,
+    65  => :ACHEVE,
 
     # ===============================
-    # 🔹 DEMANDES / VALIDATIONS
+    # 🔹 Phases projet
     # ===============================
-    DEMANDE                 = 48
-    VALIDE                  = 43
-    PROGRAMME               = 44
-    DEMANDE_TRANSFERT       = 59
-    TRANSFERT_VALIDE        = 62
-   
+    105 => :EN_EXECUTION,
+    107 => :RECEPTIONNE,
+
     # ===============================
-    # 🔹 PROSPECTION / PA
+    # 🔹 Demandes / Validations
     # ===============================
-    PROSPECTION             = 81
-    EXPRESSION_BESOIN       = 82
-    ETUDE_FAISABILITE       = 83
-    ELABORATION_OFFRE       = 84
-    RECEPTION_BC            = 85
-    ENVOI_BC                = 86
-    LANCEMENT_OC_OP         = 87
-    RECENSEMENT_APPROUVE    = 89
-    CLASSEMENT_GEO          = 113
-    ESTIMATION              = 90
-    PA_VALIDE               = 91
+    48  => :DEMANDE,
+    43  => :VALIDE,
+    44  => :PROGRAMME,
+    59  => :DEMANDE_TRANSFERT,
+    62  => :TRANSFERT_VALIDE,
+
+    # ===============================
+    # 🔹 Prospection / PA
+    # ===============================
+    81  => :PROSPECTION,
+    82  => :EXPRESSION_BESOIN,
+    83  => :ETUDE_FAISABILITE,
+    84  => :ELABORATION_OFFRE,
+    85  => :RECEPTION_BC,
+    86  => :ENVOI_BC,
+    87  => :LANCEMENT_OC_OP,
+    89  => :RECENSEMENT_APPROUVE,
+    113 => :CLASSEMENT_GEO,
+    90  => :ESTIMATION,
+    91  => :PA_VALIDE,
 
     # ===============================
     # 🔹 ODN
     # ===============================
-    ODN_EN_TRAITEMENT       = 92
-    ODN_SOUS_RESERVE        = 93
-    ODN_APPROUVE            = 94
-    ODN_EDITION             = 97
-    ODN_TRANSMIS            = 95
-    ODN_TRANSMIS_MAIL       = 104
+    92  => :ODN_EN_TRAITEMENT,
+    93  => :ODN_SOUS_RESERVE,
+    94  => :ODN_APPROUVE,
+    97  => :ODN_EDITION,
+    95  => :ODN_TRANSMIS,
+    104 => :ODN_TRANSMIS_MAIL,
 
     # ===============================
-    # 🔹 EXCEPTIONS / DÉCISIONS
+    # 🔹 Exceptions / Décisions
     # ===============================
-    ANNULE_JUMELAGE         = 98
-    ACTION_APPROUVEE        = 99
+    98  => :ANNULE_JUMELAGE,
+    99  => :ACTION_APPROUVEE,
 
     # ===============================
-    # 🔹 COMMISSIONS / CONTRATS
+    # 🔹 Commissions / Contrats
     # ===============================
-    COMMISSION_GRE_A_GRE    = 108
-    COMMISSION_CDC          = 100
-    ETABLISSEMENT_CDC_CPT   = 101
-    CDC_CPT_APPROUVE        = 103
-    VISA_CCM_ACCORDEE       = 111
-    NEGOCIATION_EN_COURS    = 112
-    CONTRAT_NOTIFIE         = 102
-    GRE_A_GRE_REFUSE        = 109
-    GRE_A_GRE_APPROUVE      = 110
+    108 => :COMMISSION_GRE_A_GRE,
+    100 => :COMMISSION_CDC,
+    101 => :ETABLISSEMENT_CDC_CPT,
+    103 => :CDC_CPT_APPROUVE,
+    111 => :VISA_CCM_ACCORDEE,
+    112 => :NEGOCIATION_EN_COURS,
+    102 => :CONTRAT_NOTIFIE,
+    109 => :GRE_A_GRE_REFUSE,
+    110 => :GRE_A_GRE_APPROUVE
+  }.freeze
 
     # =====================================================
     # 🔹 Custom Fields  Redmine

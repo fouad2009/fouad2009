@@ -8,25 +8,20 @@ module ReportProject
       # Methodes de traitement par action 
       # =========================
       
+    status = STATUSES[data[:status_id]]
     
     config_aps = RULES_NBR_CONFIG[:actions][:aps] 
     
     if data[:tracker_id] == 29 # meme deja dispatcher a filtrer l'envoi selon le type tracker_id , appliqué un deuxiem filtre 
-      config_aps.each do |status,value| 
-        value.each do |state,field|
-
-         if field == :count 
-            Rails.logger.error "erreur satate #{tracker_struct[state].inspect}"
-             puts "erreur satate #{tracker_struct[state].inspect}"
-            Rails.logger.error "erreur satate #{tracker_struct[state][:pa].inspect}"
-           tracker_struct[state][:pa][field] += 1 if data[:exercice_PA] 
-           tracker_struct[state][:hp][field] += 1 if data[:exercice_HP]
-           tracker_struct[state][:rar][field]+=1  if data[:exercice_RAR] 
-         end 
-       end 
-     end
-        
-   end
+       
+            state =   config_aps[status][:state] 
+            field =   config_aps[status][:field]
+          
+         tracker_struct[:planned][:pa][:count] += 1
+         tracker_struct[state][:pa][field] += 1 if field == :count 
+    end 
+       
+ 
     
     
     

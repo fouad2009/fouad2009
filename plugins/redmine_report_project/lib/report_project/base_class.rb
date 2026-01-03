@@ -77,7 +77,7 @@ module ReportProject
 
         Context.new(
           tracker_id:                 issue[:tracker_id],
-          status:                     issue[:status_id],
+          status_id:                     issue[:status_id],
           ratio:                      issue[:done_ratio].to_i,
 
           capacite_acces_odn_prevue:  fields[:capacite_acces_odn_prevue].to_f,
