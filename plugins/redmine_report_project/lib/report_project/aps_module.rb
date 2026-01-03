@@ -11,6 +11,8 @@ module ReportProject
         config_aps = RULES_NBR_CONFIG[:actions][:aps]
 
         if data[:tracker_id] == 29  # meme deja dispatcher a filtrer l'envoi selon le type tracker_id , appliqué un deuxiem  filtre
+             
+             begin
 
               config_aps.each do |status,value|
                 value.each do |state,field|
@@ -19,9 +21,13 @@ module ReportProject
                    tracker_struct[state][:hp][field] += 1 if data[:exercice_HP]
                    tracker_struct[state][:rar][field]+=1 if data[:exercice_RAR]
                   end
-                end
+                rescue => e
+                    Rails.logger.error "Une erreur est survenue: #{e.message}"
+                   Rails.logger.error e.backtrace.join("\n")  # pour avoir la stack complète
+                  end
+                  
               end
-
+             
         end
 
 
