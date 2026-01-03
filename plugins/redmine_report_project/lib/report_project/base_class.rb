@@ -76,10 +76,9 @@ module ReportProject
         scenario_tdm   = scenario_value == 293
 
         Context.new(
-          tracker_id:                 issue[:tracker_id],
-          statut:                  issue[:status_id],
+          tracker_id:                 issue[:tracker_id].to_i,
+          statut:                     issue[:status_id].to_i,
           ratio:                      issue[:done_ratio].to_i,
-
           capacite_acces_odn_prevue:  fields[:capacite_acces_odn_prevue].to_f,
           km_alveole_realise:         fields[:km_alveole_realise].to_f,
           capacite_realisee:          fields[:capacite_realisee].to_i,
