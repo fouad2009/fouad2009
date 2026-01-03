@@ -21,14 +21,17 @@ module ReportProject
                    tracker_struct[state][:hp][field] += 1 if data[:exercice_HP]
                    tracker_struct[state][:rar][field]+=1 if data[:exercice_RAR]
                   end
-                rescue => e
+                end
+              end
+
+             rescue => e
                     Rails.logger.error "Une erreur est survenue: #{e.message}"
                    Rails.logger.error e.backtrace.join("\n")  # pour avoir la stack complète
-                  end
+             end
                   
-              end
-             
         end
+             
+        
 
 
       end
