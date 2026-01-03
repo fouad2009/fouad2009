@@ -8,33 +8,28 @@ module ReportProject
       # Methodes de traitement par action 
       # =========================
       
-    RULES_NBR_CONFIG[:actions][:aps].each do |action, cfg|
-  state = cfg[:state]
-  field = cfg[:field]
+    
+    config_aps = RULES_NBR_CONFIG[:action][:aps] 
+    
+    if data[:tracker_id] == 29 # meme deja dispatcher a filtrer l'envoi selon le type tracker_id , appliqué un deuxiem filtre 
+      config_aps.each do |status,value| 
+        value.each do |state,field|
 
-  [:pa, :hp, :rar].each do |type|
-    if tracker_struct[state].nil?
-      Rails.logger.error "Ntracker_structtruct_tracker[state] est nil pour state=#{state}, action=#{action}"
-      next
-    end
-
-    if tracker_struct[state][type].nil?
-      Rails.logger.error "Ntracker_structtruct_tracker[state][type] est nil pour state=#{state}, type=#{type}, action=#{action}"
-      next
-    end
-
-    unless tracker_struct[state][type].key?(field)
-      Rails.logger.error "Ntracker_structtruct_tracker[state][type] n'a pas la clé field=#{field} pour action=#{action}"
-      next
-    end
-
-    # Si tout est OK, incrémente
-    tracker_struct[state][type][field] ||= 0
-    tracker_struct[state][type][field] += 1
-  end
-end
-
-
+         if field == :count 
+            Rails.logger.error "erreur satate #{tracker_struct[state].inspect}"
+            Rails.logger.error "erreur satate #{tracker_struct[state][:pa].inspect}"
+           tracker_struct[state][:pa][field] += 1 if data[:exercice_PA] 
+           tracker_struct[state][:hp][field] += 1 if data[:exercice_HP]
+           tracker_struct[state][:rar][field]+=1  if data[:exercice_RAR] 
+         end 
+       end 
+     end
+        
+   end
+    
+    
+    
+    
       end
     end
   end
