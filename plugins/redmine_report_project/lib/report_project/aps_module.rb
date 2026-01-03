@@ -17,6 +17,7 @@ module ReportProject
 
          if field == :count 
             Rails.logger.error "erreur satate #{tracker_struct[state].inspect}"
+             puts "erreur satate #{tracker_struct[state].inspect}"
             Rails.logger.error "erreur satate #{tracker_struct[state][:pa].inspect}"
            tracker_struct[state][:pa][field] += 1 if data[:exercice_PA] 
            tracker_struct[state][:hp][field] += 1 if data[:exercice_HP]
