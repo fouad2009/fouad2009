@@ -9,7 +9,8 @@ module ReportProject
       # =========================
       
     status = STATUSES[data[:status]]
-    
+    pa_typ = {data[:exercice_PA] => :pa,data[:exercice_RAR] => :rar, data[:exercice_HP] => :hp }
+    exrecice = data[:exercice]
     config_apd = RULES_NBR_CONFIG[:actions][:apd] 
     
     if [47,58].include?(data[:tracker_id])  # meme deja dispatcher a filtrer l'envoi selon le type tracker_id , appliqué un deuxiem filtre 
@@ -17,10 +18,10 @@ module ReportProject
             state =   config_apd[status][:state] 
             field =   config_apd[status][:field]
           
-         tracker_struct[:planned][:pa][:count] += 1
-         tracker_struct[:planned][:pa][:quantity] += data[field]
-         tracker_struct[state][:pa][:count] += 1 
-         tracker_struct[state][:pa][:quantity] += data[field]
+         tracker_struct[:planned][exercice][:count] += 1
+         tracker_struct[:planned][exercice][:quantity] += data[field]
+         tracker_struct[state][exercice][:count] += 1 
+         tracker_struct[state][exercice][:quantity] += data[field]
     end 
 
 

@@ -66,9 +66,14 @@ module ReportProject
         fields = normalize_fields(issue)
 
         exercice_value = fields[:exercice].to_s
-        exercice_RAR   = exercice_value.include?('RAR-')
-        exercice_HP    = exercice_value.include?('HP-')
-        exercice_PA    = !exercice_RAR && !exercice_HP
+
+         if exercice_value.include?('RAR-')
+          exercice = :pa
+         elsif exercice_value.include?('HP-')
+          exercice = :hp
+         else 
+          exercice = :pa
+         end
 
         scenario_value = fields[:scenario].to_i
         scenario_dev   = scenario_value == 291
@@ -94,11 +99,7 @@ module ReportProject
           acces_ftth_prevue:          fields[:acces_ftth_prevue].to_i,
           commercialisable:           fields[:commercialisable].to_i,
           action:                     fields[:action].to_i,
-
-          exercice_RAR:               exercice_RAR,
-          exercice_HP:                exercice_HP,
-          exercice_PA:                exercice_PA,
-
+          exercice:                   exercice,
           scenario_dev:               scenario_dev,
           scenario_mod:               scenario_mod,
           scenario_tdm:               scenario_tdm

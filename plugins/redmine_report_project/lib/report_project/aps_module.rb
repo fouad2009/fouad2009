@@ -7,8 +7,11 @@ module ReportProject
       # =========================
       # Methodes de traitement par action 
       # =========================
+    
       
+
     status = STATUSES[data[:status]]
+    
     
     config_aps = RULES_NBR_CONFIG[:actions][:aps] 
     
