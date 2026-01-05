@@ -24,7 +24,7 @@ module ReportProject
       :acces_ftth_prevue,
       :commercialisable,
       :action,
-      :exercice
+      :exercice,
       :scenario_dev,
       :scenario_mod,
       :scenario_tdm,
