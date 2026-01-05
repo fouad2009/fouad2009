@@ -24,11 +24,7 @@ module ReportProject
       :acces_ftth_prevue,
       :commercialisable,
       :action,
-
-      :exercice_RAR,
-      :exercice_HP,
-      :exercice_PA,
-
+      :exercice
       :scenario_dev,
       :scenario_mod,
       :scenario_tdm,
@@ -66,7 +62,6 @@ module ReportProject
         fields = normalize_fields(issue)
 
         exercice_value = fields[:exercice].to_s
-         exercice = nil 
          if exercice_value.include?('RAR-')
           exercice = :pa
          elsif exercice_value.include?('HP-')
