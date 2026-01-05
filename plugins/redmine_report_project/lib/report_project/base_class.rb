@@ -66,7 +66,7 @@ module ReportProject
         fields = normalize_fields(issue)
 
         exercice_value = fields[:exercice].to_s
-
+         exercice = nil 
          if exercice_value.include?('RAR-')
           exercice = :pa
          elsif exercice_value.include?('HP-')
