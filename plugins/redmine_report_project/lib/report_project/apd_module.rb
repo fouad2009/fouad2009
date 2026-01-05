@@ -9,7 +9,7 @@ module ReportProject
       # =========================
       
     status = STATUSES[data[:status]]
-    exrecice = data[:exercice]
+    exerecice = data[:exercice]
     config_apd = RULES_NBR_CONFIG[:actions][:apd] 
     
     if [47,58].include?(data[:tracker_id])  # meme deja dispatcher a filtrer l'envoi selon le type tracker_id , appliqué un deuxiem filtre 
