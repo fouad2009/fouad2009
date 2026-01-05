@@ -61,8 +61,7 @@ actions:
   # APD
   # ---------
   apd:
-    class: Apd
-
+    
     DEFAULT:
       state: planned
       field: capacite_acces_odn_prevue
