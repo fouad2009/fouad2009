@@ -9,7 +9,6 @@ module ReportProject
       # =========================
       
     status = STATUSES[data[:status]]
-    pa_typ = {data[:exercice_PA] => :pa,data[:exercice_RAR] => :rar, data[:exercice_HP] => :hp }
     exrecice = data[:exercice]
     config_apd = RULES_NBR_CONFIG[:actions][:apd] 
     
