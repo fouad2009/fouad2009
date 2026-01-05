@@ -2,7 +2,7 @@ module ReportProject
   module ApdModule
     class Apd < ReportProject::BaseClass::Base
       def self.process(issue, tracker_struct)
-
+        data = super  #  récupéré les données de la methode parent de la class Base 
 
       # =========================
       # Methodes de traitement par action 
