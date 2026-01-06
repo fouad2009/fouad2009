@@ -1,30 +1,45 @@
+
 module ReportProject
   module ApdModule
     class Apd < ReportProject::BaseClass::Base
+
       def self.process(issue, tracker_struct)
-        data = super  #  récupéré les données de la methode parent de la class Base 
+        data = super  # récupération des données depuis la classe Base
 
-      # =========================
-      # Methodes de traitement par action 
-      # =========================
-      
-    status = STATUSES[data[:status]]
-    exercice = data[:exercice]
-    config_apd = RULES_NBR_CONFIG[:actions][:apd] 
-    
-    if [47,58].include?(data[:tracker_id])  # meme deja dispatcher a filtrer l'envoi selon le type tracker_id , appliqué un deuxiem filtre 
-       
-            state =   config_apd[status][:state] 
-            field =   config_apd[status][:field]
-          
-         tracker_struct[:planned][exercice][:count] += 1
-         tracker_struct[:planned][exercice][:quantity] += data[field]
-         tracker_struct[state][exercice][:count] += 1 
-         tracker_struct[state][exercice][:quantity] += data[field]
-    end 
+        # =========================
+        # Mapping du statut (peut être nil)
+        # =========================
+        status = STATUSES[data[:status]]
+        return tracker_struct if status.nil?
 
+        exercice = data[:exercice]
 
+        # =========================
+        # Configuration APD
+        # =========================
+        config_apd = RULES_NBR_CONFIG[:actions][:apd]
+        return tracker_struct unless config_apd.key?(status)
+
+        # =========================
+        # Filtrage tracker APD
+        # =========================
+        return tracker_struct unless [47, 58].include?(data[:tracker_id])
+
+        # =========================
+        # Application des règles
+        # =========================
+        state = config_apd[status][:state]
+        field = config_apd[status][:field]
+
+        tracker_struct[:planned][exercice][:count] += 1
+        tracker_struct[:planned][exercice][:quantity] += data[field]
+
+        tracker_struct[state][exercice][:count] += 1
+        tracker_struct[state][exercice][:quantity] += data[field]
+
+        tracker_struct
       end
+
     end
   end
 end
