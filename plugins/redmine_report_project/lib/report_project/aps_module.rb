@@ -13,7 +13,17 @@ module ReportProject
     status = STATUSES[data[:status]]
     
     
-    config_aps = RULES_NBR_CONFIG[:actions][:aps] 
+    unless status
+  Rails.logger.error "[APS] Status inconnu: data[:status]=#{data[:status]}"
+  return tracker_struct
+end
+
+config_aps = RULES_NBR_CONFIG[:actions][:aps]
+
+unless config_aps.key?(status)
+  Rails.logger.error "[APS] Configuration manquante pour status=#{status} (tracker_id=#{data[:tracker_id]})"
+  return tracker_struct
+end
     
     if data[:tracker_id] == 29 # meme deja dispatcher a filtrer l'envoi selon le type tracker_id , appliqué un deuxiem filtre 
        
