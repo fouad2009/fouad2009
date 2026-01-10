@@ -47,8 +47,8 @@ module ReportProject
               state = rules_config[status][0][:lower_100][:state]
               field = rules_config[status][0][:lower_100][:field_map][TRACKERS_LIST[data[:tracker_id]]]
             elsif ratio == 100
-               state = rules_config[status][0][:equal_100][:state]
-               field = rules_config[status][0][:equal_100][:field_map][TRACKERS_LIST[data[:tracker_id]]]
+               state = rules_config[status][1][:equal_100][:state]
+               field = rules_config[status][1][:equal_100][:field_map][TRACKERS_LIST[data[:tracker_id]]]
             end
 
            puts "Array"
