@@ -10,23 +10,26 @@ module ReportProject
         # =========================
         status = STATUSES[data[:status]]
         return tracker_struct if status.nil?
-
+       
+        
         # =========================
         # Configuration APS
         # =========================
-        config_aps = RULES_NBR_CONFIG[:actions][:aps]
-        return tracker_struct unless config_aps.key?(status)
+        rules_config = RULES_NBR_CONFIG[:aps]
+        action =  rules_config[:actions].include?(TRACKERS_LIST[data[:tracker_id]]) 
+        
+        return tracker_struct unless rules_config.key?(status)
 
         # =========================
         # Filtrage tracker APS
         # =========================
-        return tracker_struct unless data[:tracker_id] == 29
+        return tracker_struct unless action
 
         # =========================
         # Application des règles
         # =========================
-        state = config_aps[status][:state]
-        field = config_aps[status][:field]
+        state = rules_config[status][:state]
+        field = rules_config[status][:field]
 
         tracker_struct[:category_1][:pa][:planned][:count] += 1
         tracker_struct[:category_1][:pa][state][field] += 1 if field == :count

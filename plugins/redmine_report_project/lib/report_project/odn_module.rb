@@ -24,7 +24,7 @@ module ReportProject
 
          return tracker_struct unless [60].include?(data[:tracker_id])
 
-         case config_odn
+         case config_odn.class
 
           when Hash
 

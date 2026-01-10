@@ -17,19 +17,20 @@ module ReportProject
         # =========================
         # Configuration APD
         # =========================
-        config_apd = RULES_NBR_CONFIG[:actions][:apd]
-        return tracker_struct unless config_apd.key?(status)
+        rules_config = RULES_NBR_CONFIG[:actions][:apd]
+        action =  rules_config[:actions].include?(TRACKERS_LIST[data[:tracker_id]]) 
+        return tracker_struct unless rules_config.key?(status)
 
         # =========================
         # Filtrage tracker APD
         # =========================
-        return tracker_struct unless [47, 58].include?(data[:tracker_id])
+        return tracker_struct unless action
 
         # =========================
         # Application des règles
         # =========================
-        state = config_apd[status][:state]
-        field = config_apd[status][:field]
+        state = rules_config[status][:state]
+        field = rules_config[status][:field]
 
         tracker_struct[:category_1][exercice][:planned][:count] += 1
         tracker_struct[:category_1][exercice][:planned][:quantity] += data[field]
