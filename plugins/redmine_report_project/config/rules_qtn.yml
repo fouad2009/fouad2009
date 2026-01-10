@@ -2,14 +2,14 @@
 
 common_fields:
   planned_fields: &planned_fields
-    odn_prestation:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     capacite_acces_odn_prevue
-    canalisation: distance_fo_prevue_km
+    odn_prestation: capacite_acces_odn_prevue                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    capacite_acces_odn_prevue
+    pose_cana: distance_fo_prevue_km
     reservation_fo: distance_fo_prevue_km
     default: nbr
 
   completed_fields: &completed_fields
     odn_service: capacite_acces_odn_prevue
-    canalisation: distance_fo_prevue_km
+    pose_cana: distance_fo_prevue_km
     pose_fo: distance_fo_prevue_km
     corporate_fo: distance_fo_prevue_km
     reservation_fo: distance_fo_prevue_km
@@ -34,15 +34,13 @@ prestation:
     field_map: *planned_fields
 
   PHASE_ETUDE:
-    cases:
-      - when:
-          ratio: lower_100
-        state: study_in_progress
-        field_map: *planned_fields
-      - when:
-          ratio: equal_100
-        state: study_completed
-        field_map: *planned_fields
+
+    - lower_100:
+      state: study_in_progress
+      field_map: *planned_fields
+    - equal_100:
+      state: study_completed
+      field_map: *planned_fields
 
   PHASE_CONSULTATION:
     state: consultation
@@ -65,26 +63,22 @@ prestation:
     field_map: *planned_fields
 
   EN_DIFFICULTE:
-    cases:
-      - when:
-          ratio: lower_100
-        state: in_progress
-        field_map: *planned_fields
-      - when:
-          ratio: equal_100
-        state: completed
-        field_map: *completed_fields
+   
+    - lower_100:
+      state: study_in_progress
+      field_map: *planned_fields
+    - equal_100:
+      state: study_completed
+      field_map: *planned_fields
 
   EN_PROGRESSION:
-    cases:
-      - when:
-          ratio: lower_100
-        state: in_progress
-        field_map: *planned_fields
-      - when:
-          ratio: equal_100
-        state: completed
-        field_map: *completed_fields
+   
+    - lower_100:
+      state: study_in_progress
+      field_map: *planned_fields
+    - equal_100:
+      state: study_completed
+      field_map: *planned_fields
 
   TRAVAUX_ACHEVES:
     state: odn_completed
