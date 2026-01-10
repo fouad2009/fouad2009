@@ -28,8 +28,8 @@ module ReportProject
         state = config_aps[status][:state]
         field = config_aps[status][:field]
 
-        tracker_struct[:pa][:planned][:count] += 1
-        tracker_struct[:pa][state][field] += 1 if field == :count
+        tracker_struct[:category_1][:pa][:planned][:count] += 1
+        tracker_struct[:category_1][:pa][state][field] += 1 if field == :count
 
         tracker_struct
       end

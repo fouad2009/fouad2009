@@ -47,7 +47,7 @@ module ReportProject
   def self.build_report_data(project_parent_id)
   
     # Structure de base pour chaque état avec métriques à zéro
-    base_struct = ReportProject::ReportSchema.build_exercice_metrics
+    base_struct = ReportProject::ReportSchema.build_category_metrics
 
 
     # Récupération des issues déjà regroupées et optimisées

@@ -10,6 +10,13 @@ module ReportProject
       EXERCICES_TYPE = %i[pa hp rar].freeze
 
      # =====================================================
+     # 🔹 catégorie type selon l'action
+     # =====================================================
+    
+
+      CATEGORIES = %i[category_1 category_2].freeze
+
+     # =====================================================
      # 🔹 Metrics Entête de la structure 
      # =====================================================
      # entête de la structure
@@ -334,12 +341,18 @@ CUSTOM_FIELDS_LIST = [
   
     def self.build_exercice_metrics
 
-      EXERCICES_TYPE.each_with_object({}) do |exercice, ex_hash|
-       ex_hash[exercice] =  STATES_CORE.each_with_object({}) do |state, states_hash|
-        states_hash[state] = { count: 0, quantity: 0 }
-      end
+       EXERCICES_TYPE.each_with_object({}) do |exercice, ex_hash|
+         ex_hash[exercice] =  STATES_CORE.each_with_object({}) do |state, states_hash|
+           states_hash[state] = { count: 0, quantity: 0 }
+         end
+       end
+    end
+
+  def self.build_category_metrics
+    CATEGORIES.each_with_object({}) do |category, cat_hash|
+     cat_hash[category] = build_exercice_metrics
+    end
   end
-end
 
 
   end
