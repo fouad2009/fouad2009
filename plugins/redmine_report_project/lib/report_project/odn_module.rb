@@ -20,10 +20,12 @@ module ReportProject
              exercice = data[:exercice]
              scenario = data[:scenario].to_i
 
-             scenario_dev   = scenario == 291
-             scenario_mod   = scenario == 292
-             scenario_tdm   = scenario == 293
-             category = scenario_dev ? :category_1 : scenario_mod ? :category_2 : nil
+            category = case scenario
+                 when 291 then :category_1
+                 when 292 then :category_2
+                 when 293 then :category_2
+              end
+
         
          return tracker_struct unless rules_config.key?(status)
 
