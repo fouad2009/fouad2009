@@ -3,16 +3,18 @@
 common_fields:
   planned_fields: &planned_fields
     odn_prestation: capacite_acces_odn_prevue
-    pose_cana: distance_fo_prevue_km
+    pose_cana: km_alveole_prevue
+    pose_fo: distance_fo_prevue_km
+    corporate_fo: distance_fo_prevue_km
     reservation_fo: distance_fo_prevue_km
     default: nbr
 
   completed_fields: &completed_fields
     odn_prestation: capacite_realisee
-    pose_cana: distance_fo_prevue_km
-    pose_fo: distance_fo_prevue_km
-    corporate_fo: distance_fo_prevue_km
-    reservation_fo: distance_fo_prevue_km
+    pose_cana: km_alveole_realise
+    pose_fo: distance_fo_posee_km
+    corporate_fo: distance_fo_posee_km
+    reservation_fo: distance_fo_posee_km
     default: nbr
 
 actions:
