@@ -50,13 +50,14 @@ module ReportProject
         project_hash = (data[project_id] ||= {})
         tracker_hash = (project_hash[tracker_id] ||= {})
         tracker_hash[issue_id] = {
-          project_id: project_id,
-          issue_id: issue_id,
-          tracker_id: tracker_id,
-          status_id: status_id,
-          done_ratio: done_ratio,
-          estimated_hours: est_hours
-        }.merge(cf_hash)
+  project_id: project_id,
+  issue_id: issue_id,
+  tracker_id: tracker_id.to_i,  # <== IMPORTANT
+  status_id: status_id,
+  done_ratio: done_ratio,
+  estimated_hours: est_hours
+}.merge(cf_hash.transform_keys(&:to_i))
+
       end
 
       data
