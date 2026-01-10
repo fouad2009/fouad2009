@@ -46,7 +46,7 @@ prestation:
     state: consultation
     field_map: *planned_fields
 
-  PHASE_RET_AU_LANCEMENT:
+  PRET_AU_LANCEMENT:
     state: committed
     field_map: *planned_fields
 
