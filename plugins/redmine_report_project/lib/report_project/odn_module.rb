@@ -27,7 +27,7 @@ module ReportProject
          return tracker_struct unless (action && action_type)
          puts "dans la partie ODN"
          case rules_config[status].class
-           puts "partie de state: #{rules_config[status].class}"
+        
           when Hash
              
              state = rules_config[status][:state]
