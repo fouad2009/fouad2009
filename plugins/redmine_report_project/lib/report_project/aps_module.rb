@@ -16,7 +16,7 @@ module ReportProject
         # Configuration APS
         # =========================
         rules_config = RULES_NBR_CONFIG[:aps]
-        action =  rules_config[:actions].include?(TRACKERS_LIST[data[:tracker_id]]) 
+        action =  RULES_NBR_CONFIG[:actions].include?(TRACKERS_LIST[data[:tracker_id]]) 
         
         return tracker_struct unless rules_config.key?(status)
 

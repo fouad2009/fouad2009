@@ -2,12 +2,15 @@
 # =========================
 # Actions / Trackers
 # =========================
+  actions:
+    - :etude_fttx_aps
+    - :cite_dev
+    - :cite_mod_msan
+    - :cite_mod_tdm
+    
 
   aps:
     
-    actions:
-      - :etude_fttx_aps
-
     INITIALISATION:
       state: not_started
       field: count
@@ -57,11 +60,6 @@
   # ---------
   apd:
     
-    actions:
-      - :cite_dev
-      - :cite_mod_msan
-      - :cite_mod_tdm
-
     INITIALISATION:
       state: not_started
       field: capacite_acces_odn_prevue

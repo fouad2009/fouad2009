@@ -15,6 +15,15 @@ common_fields:
     reservation_fo: distance_fo_prevue_km
     default: nbr
 
+  actions:
+    - :pose_cable_urbain
+    - :remplacement_cable
+    - :remplacement_cana
+    - :pose_fo
+    - :pose_cana
+    - :odn_prestation
+
+
 # ===================================
 # 🔹 PRESTATION
 # ===================================

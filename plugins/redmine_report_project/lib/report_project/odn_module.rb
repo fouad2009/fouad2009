@@ -8,6 +8,8 @@ module ReportProject
             config_odn = RULES_QTN_CONFIG[:prestation]
             planned_fields = RULES_QTN_CONFIG[:common_fields][:planned_fields]
             completed_fields = RULES_QTN_CONFIG[:common_fields][:completed_fields]
+            action_type = TRACKERS_LIST[data[:tracker_id]] == :odn_prestation
+            action =  RULES_NBR_CONFIG[:actions].include?(TRACKERS_LIST[data[:tracker_id]])
 
            # =========================
            # Mapping du statut (peut être nil)
@@ -22,7 +24,7 @@ module ReportProject
              scenario_mod   = scenario == 292
              scenario_tdm   = scenario == 293
 
-         return tracker_struct unless [60].include?(data[:tracker_id])
+         return tracker_struct unless (action && action_type)
 
          case config_odn.class
 
