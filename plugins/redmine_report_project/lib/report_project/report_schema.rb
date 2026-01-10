@@ -285,6 +285,7 @@ CUSTOM_FIELDS_LIST = [
   24,   # Capacité accès ODN prévue
   27,   # Km/alvéole réalisé
   28,   # Capacité réalisée
+  68,   # catégorie
   73,   # Dist- FO prévue KM
   74,   # Km/alvéole prévue
   83,   # Distance FO posée / KM
