@@ -74,6 +74,7 @@ module ReportProject
           tracker_id:                 issue[:tracker_id].to_i,
           status:                     issue[:status_id].to_i,
           ratio:                      issue[:done_ratio].to_i,
+          category:                   issue[:category].to_s,
           capacite_acces_odn_prevue:  fields[:capacite_acces_odn_prevue].to_f,
           km_alveole_realise:         fields[:km_alveole_realise].to_f,
           capacite_realisee:          fields[:capacite_realisee].to_i,

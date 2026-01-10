@@ -14,7 +14,11 @@ custom_fields:
   capacite_realisee:
     id: 28
     cast: to_i
-
+    
+  category:
+    id: 68
+    cast: to_s
+  
   distance_fo_prevue_km:
     id: 73
     cast: to_f
