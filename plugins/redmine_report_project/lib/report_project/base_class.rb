@@ -60,7 +60,7 @@ module ReportProject
 
         exercice_value = fields[:exercice].to_s
          if exercice_value.include?('RAR-')
-          exercice = :pa
+          exercice = :rar
          elsif exercice_value.include?('HP-')
           exercice = :hp
          else 
