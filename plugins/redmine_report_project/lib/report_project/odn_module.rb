@@ -26,7 +26,7 @@ module ReportProject
 
          return tracker_struct unless (action && action_type)
          puts "dans la partie ODN"
-         case rules_config[status].class
+         case rules_config[status]
         
           when Hash
              
@@ -44,7 +44,7 @@ module ReportProject
             end
 
           when Array
-
+           puts "Array"
           end
 
 

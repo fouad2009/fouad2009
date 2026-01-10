@@ -36,11 +36,11 @@ prestation:
   PHASE_ETUDE:
 
     - lower_100:
-      state: study_in_progress
-      field_map: *planned_fields
+       state: study_in_progress
+       field_map: *planned_fields
     - equal_100:
-      state: study_completed
-      field_map: *planned_fields
+       state: study_completed
+       field_map: *planned_fields
 
   PHASE_CONSULTATION:
     state: consultation
@@ -65,20 +65,20 @@ prestation:
   EN_DIFFICULTE:
    
     - lower_100:
-      state: study_in_progress
-      field_map: *planned_fields
+       state: study_in_progress
+       field_map: *planned_fields
     - equal_100:
-      state: study_completed
-      field_map: *planned_fields
+       state: study_completed
+       field_map: *planned_fields
 
   EN_PROGRESSION:
    
     - lower_100:
-      state: study_in_progress
-      field_map: *planned_fields
+       state: study_in_progress
+       field_map: *planned_fields
     - equal_100:
-      state: study_completed
-      field_map: *planned_fields
+       state: study_completed
+       field_map: *planned_fields
 
   TRAVAUX_ACHEVES:
     state: odn_completed
