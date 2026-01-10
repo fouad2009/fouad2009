@@ -26,21 +26,14 @@ module ReportProject
              category = scenario_dev ? :category_1 : scenario_mod ? :category_2 : nil
 
          return tracker_struct unless (action && action_type)
-         puts "dans la partie ODN"
+      
          case rules_config[status]
-
-        
           when Hash
              
              state = rules_config[status][:state]
              field = rules_config[status][:field_map][TRACKERS_LIST[data[:tracker_id]]]
              puts "Hash state: #{state}, field:#{field}"
       
-             tracker_struct[category][exercice][state][:count] += 1
-             tracker_struct[category][exercice][state][:quantity] += data[field]
-
-        
-
           when Array
 
             if ratio < 100
@@ -54,6 +47,8 @@ module ReportProject
            puts "Array state: #{state}, field:#{field}"
           end
 
+          tracker_struct[category][exercice][state][:count] += 1
+          tracker_struct[category][exercice][state][:quantity] += data[field]
 
 
 
