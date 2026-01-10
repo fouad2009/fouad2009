@@ -31,7 +31,7 @@ module ReportProject
   TRACKERS_LIST = {
   2  => :pose_cable_urbain,
   3  => :remplacement_cable,
-  4  => :pose_cana
+  4  => :pose_cana,
   5  => :remplacement_cana,
   6  => :pose_fo,
   7  => :dev_olt_ftth,
