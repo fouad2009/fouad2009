@@ -8,7 +8,7 @@ common_fields:
     default: nbr
 
   completed_fields: &completed_fields
-    odn_prestation: capacite_acces_odn_prevue
+    odn_prestation: capacite_realisee
     pose_cana: distance_fo_prevue_km
     pose_fo: distance_fo_prevue_km
     corporate_fo: distance_fo_prevue_km
