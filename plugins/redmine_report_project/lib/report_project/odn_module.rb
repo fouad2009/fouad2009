@@ -26,7 +26,7 @@ module ReportProject
              category = scenario_dev ? :category_1 : scenario_mod ? :category_2 : nil
 
          return tracker_struct unless (action && action_type)
-      
+      begin
          case rules_config[status]
           when Hash
              
@@ -49,8 +49,9 @@ module ReportProject
 
           tracker_struct[category][exercice][state][:count] += 1
           tracker_struct[category][exercice][state][:quantity] += data[field]
-
-
+        rescue 
+          puts "status: #{status}, state: #{state}, field:#{field}"
+        end
 
       end
     end
