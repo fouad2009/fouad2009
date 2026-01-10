@@ -31,7 +31,7 @@ module ReportProject
           when Hash
              
              state = rules_config[status][:state]
-             field = rules_config[status][:field_map][TRACKERS_LIST[data[:tracker_id]]]
+             field = rules_config[status][:field_map][:odn_prestation]  #[TRACKERS_LIST[data[:tracker_id]]]
              puts "state: #{state}, field:#{field}"
             if scenario_dev
 
