@@ -32,7 +32,7 @@ module ReportProject
              
              state = rules_config[status][:state]
              field = rules_config[status][:field_map][TRACKERS_LIST[data[:tracker_id]]]
-
+             puts "sate: #{satate}, field:#{field}"
             if scenario_dev
 
              tracker_struct[:category_1][exercice][state][:count] += 1
