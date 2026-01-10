@@ -31,11 +31,11 @@ module ReportProject
         state = config_apd[status][:state]
         field = config_apd[status][:field]
 
-        tracker_struct[:planned][exercice][:count] += 1
-        tracker_struct[:planned][exercice][:quantity] += data[field]
+        tracker_struct[exercice][:planned][:count] += 1
+        tracker_struct[exercice][:planned][:quantity] += data[field]
 
-        tracker_struct[state][exercice][:count] += 1
-        tracker_struct[state][exercice][:quantity] += data[field]
+        tracker_struct[exercice][state][:count] += 1
+        tracker_struct[exercice][state][:quantity] += data[field]
 
         tracker_struct
       end

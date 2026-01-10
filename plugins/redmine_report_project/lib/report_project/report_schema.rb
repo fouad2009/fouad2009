@@ -332,13 +332,15 @@ CUSTOM_FIELDS_LIST = [
     # Retourne un hash { état => { count: 0, quantity: 0 } }
     # Ce sera le “grand tableau” initialisé à zéro pour chaque tracker
   
-    def self.build_state_metrics
-         STATES_CORE.each_with_object({}) do |state, states_hash|
-            states_hash[state] =  EXERCICES_TYPE.each_with_object({}) do |exercice, ex_hash|
-               ex_hash[exercice] = {count: 0, quantity: 0}
-             end
-         end
-    end
+    def self.build_exercice_metrics
+
+      EXERCICES_TYPE.each_with_object({}) do |exercice, ex_hash|
+       ex_hash[exercice] =  STATES_CORE.each_with_object({}) do |state, states_hash|
+        states_hash[state] = { count: 0, quantity: 0 }
+      end
+  end
+end
+
 
   end
 end
