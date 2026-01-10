@@ -25,7 +25,7 @@ module ReportProject
              scenario_tdm   = scenario == 293
 
          return tracker_struct unless (action && action_type)
-
+         p
          case rules_config[status].class
 
           when Hash
