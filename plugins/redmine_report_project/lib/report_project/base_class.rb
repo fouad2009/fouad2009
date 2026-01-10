@@ -25,9 +25,8 @@ module ReportProject
       :commercialisable,
       :action,
       :exercice,
-      :scenario_dev,
-      :scenario_mod,
-      :scenario_tdm,
+      :scenario
+      
 
       keyword_init: true
     )
@@ -71,9 +70,7 @@ module ReportProject
          end
 
         scenario_value = fields[:scenario].to_i
-        scenario_dev   = scenario_value == 291
-        scenario_mod   = scenario_value == 292
-        scenario_tdm   = scenario_value == 293
+        
 
         Context.new(
           tracker_id:                 issue[:tracker_id].to_i,
@@ -95,9 +92,7 @@ module ReportProject
           commercialisable:           fields[:commercialisable].to_i,
           action:                     fields[:action].to_i,
           exercice:                   exercice,
-          scenario_dev:               scenario_dev,
-          scenario_mod:               scenario_mod,
-          scenario_tdm:               scenario_tdm
+          scenario:                   scenario_value
         )
       end
     end
