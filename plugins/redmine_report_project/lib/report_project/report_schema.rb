@@ -325,7 +325,7 @@ CUSTOM_FIELDS_LIST = [
     # =====================================================
     # Définition des types de projet pour classification
    
-    CATEGORIES = %i[
+    CATEGORIES_TYPE = %i[
       development
       modernization
       maintenance
