@@ -17,7 +17,7 @@ module ReportProject
         # =========================
         # Configuration APD
         # =========================
-        rules_config = RULES_NBR_CONFIG[:actions][:apd]
+        rules_config = RULES_NBR_CONFIG[:apd]
         action =  rules_config[:actions].include?(TRACKERS_LIST[data[:tracker_id]]) 
         return tracker_struct unless rules_config.key?(status)
 
