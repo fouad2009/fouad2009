@@ -25,10 +25,11 @@ module ReportProject
              scenario_tdm   = scenario == 293
 
          return tracker_struct unless (action && action_type)
-         p
+         puts "dans la partie ODN"
          case rules_config[status].class
-
+           puts "partie de state: #{rules_config[status].class}"
           when Hash
+             
              state = rules_config[status][:state]
              field = rules_config[status][:field_map][TRACKERS_LIST[data[:tracker_id]]]
 
