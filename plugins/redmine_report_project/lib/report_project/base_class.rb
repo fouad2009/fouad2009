@@ -8,7 +8,7 @@ module ReportProject
       :tracker_id,
       :status,
       :ratio,
-
+      :category,
       :capacite_acces_odn_prevue,
       :km_alveole_realise,
       :capacite_realisee,
@@ -25,9 +25,7 @@ module ReportProject
       :commercialisable,
       :action,
       :exercice,
-      :scenario
-      
-
+      :scenario,
       keyword_init: true
     )
 
