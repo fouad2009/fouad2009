@@ -64,21 +64,21 @@ prestation:
 
   EN_DIFFICULTE:
    
-    - lower_100:
-       state: study_in_progress
+    - lower_100: 
+       state: in_progress
        field_map: *planned_fields
     - equal_100:
-       state: study_completed
-       field_map: *planned_fields
+       state: completed
+       field_map: *completed_fields
 
   EN_PROGRESSION:
-   
-    - lower_100:
-       state: study_in_progress
+
+    - lower_100: 
+       state: in_progress
        field_map: *planned_fields
     - equal_100:
-       state: study_completed
-       field_map: *planned_fields
+       state: completed
+       field_map: *completed_fields
 
   TRAVAUX_ACHEVES:
     state: odn_completed

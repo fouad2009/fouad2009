@@ -16,34 +16,41 @@ module ReportProject
            # =========================
              status = STATUSES[data[:status]]
              return tracker_struct if status.nil?
-
+             ratio = data[:ratio]
              exercice = data[:exercice]
              scenario = data[:scenario].to_i
 
              scenario_dev   = scenario == 291
              scenario_mod   = scenario == 292
              scenario_tdm   = scenario == 293
+             category = scenario_dev ? :category_1 : scenario_mod ? :category_2 : nil
 
          return tracker_struct unless (action && action_type)
          puts "dans la partie ODN"
          case rules_config[status]
+
         
           when Hash
              
              state = rules_config[status][:state]
-             field = rules_config[status][:field_map][:odn_prestation]  #[TRACKERS_LIST[data[:tracker_id]]]
+             field = rules_config[status][:field_map][TRACKERS_LIST[data[:tracker_id]]]
              puts "state: #{state}, field:#{field}"
-            if scenario_dev
+      
+             tracker_struct[category][exercice][state][:count] += 1
+             tracker_struct[category][exercice][state][:quantity] += data[field]
 
-             tracker_struct[:category_1][exercice][state][:count] += 1
-             tracker_struct[:category_1][exercice][state][:quantity] += data[field]
-
-            elsif scenario_mod
-              tracker_struct[:category_1][exercice][state][:count] += 1
-              tracker_struct[:category_1][exercice][state][:quantity] += data[field]
-            end
+        
 
           when Array
+
+            if ratio < 100
+              state = rules_config[status][0][:lower_100][:state]
+              field = rules_config[status][:field_map][0][:lower_100][TRACKERS_LIST[data[:tracker_id]]]
+            elsif ratio == 100
+               state = rules_config[status][0][:equal_100][:state]
+               field = rules_config[status][:field_map][0][:equal_100][TRACKERS_LIST[data[:tracker_id]]]
+            end
+
            puts "Array"
           end
 
