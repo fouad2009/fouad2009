@@ -350,6 +350,9 @@ CUSTOM_FIELDS_LIST = [
     CATEGORIES.each_with_object({}) do |category, cat_hash|
      cat_hash[category] = build_exercice_metrics
     end
+  end
+
+
 
   end
 end
