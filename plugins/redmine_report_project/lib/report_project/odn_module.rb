@@ -34,7 +34,7 @@ module ReportProject
              
              state = rules_config[status][:state]
              field = rules_config[status][:field_map][TRACKERS_LIST[data[:tracker_id]]]
-             puts "state: #{state}, field:#{field}"
+             puts "Hash state: #{state}, field:#{field}"
       
              tracker_struct[category][exercice][state][:count] += 1
              tracker_struct[category][exercice][state][:quantity] += data[field]
@@ -51,7 +51,7 @@ module ReportProject
                field = rules_config[status][1][:equal_100][:field_map][TRACKERS_LIST[data[:tracker_id]]]
             end
            i = 0
-           puts "Array #{i+1}"
+           puts "Array state: #{state}, field:#{field}"
           end
 
 
