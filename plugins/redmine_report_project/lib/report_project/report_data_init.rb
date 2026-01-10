@@ -1,86 +1,86 @@
 module ReportProject
-  module ReportDataInit 
-  # Module de generation de la structure de donnée commune pour les projets
-  def self.calculate_for_project(project_parent_id)
-    User.current = User.admin.first if User.current.anonymous?
-    project = Project.find(project_parent_id)
-    with_subprojects = Setting.display_subprojects_issues?
-    cond = project.project_condition(with_subprojects)
-    tracker_ids = project.rolled_up_trackers(with_subprojects).visible.map(&:id)
+  module ReportDataInit
 
-    # Récupération des issues et custom_values
-    issues = Issue.visible.open
-                .where(cond)
-                .where(tracker_id: tracker_ids)
-                .includes(:custom_values)
-                .where(custom_values: { custom_field_id: ReportSchema::CUSTOM_FIELDS_LIST})
-                .pluck(:project_id, :id, :tracker_id, :status_id, :done_ratio, :estimated_hours,
-                       'custom_values.custom_field_id', 'custom_values.value')
-                .map do |ligne|
-                  {
-                    project_id: ligne[0],
-                    issue_id: ligne[1],
-                    tracker_id: ligne[2],
-                    status_id: ligne[3],
-                    done_ratio: ligne[4],
-                    estimated_hours: ligne[5],
-                    ligne[6].to_i => ligne[7]
-                  }
-                end
+    # =====================================================
+    # Génération optimisée de la structure projet → tracker → issues
+    # =====================================================
+    def self.calculate_for_project(project_parent_id)
+      User.current = User.admin.first if User.current.anonymous?
 
-    # Regroupement par projet, puis tracker, puis fusion des données par issue_id
-    data = issues.group_by { |h| h[:project_id] }
-               .transform_values do |proj_issues|
-                 proj_issues.group_by { |h| h[:tracker_id] }
-                    .transform_values do |tracker_issues|
-                      tracker_issues.group_by { |h| h[:issue_id] }
-                          .map do |issue_id, issue_hashes|
-                              # Fusion de tous les hashes pour la même issue_id
-                              issue_hashes.inject(:merge).merge(issue_id: issue_id)
-                          end
-                    end
-               end
-    data
-  
-  end
+      project = Project.find(project_parent_id)
+      with_subprojects = Setting.display_subprojects_issues?
+      cond = project.project_condition(with_subprojects)
+      tracker_ids = project.rolled_up_trackers(with_subprojects).visible.map(&:id)
 
-  def self.build_report_data(project_parent_id)
-  
-    # Structure de base pour chaque état avec métriques à zéro
-    base_struct = ReportProject::ReportSchema.build_category_metrics
+      rows = Issue.visible.open
+                  .where(cond)
+                  .where(tracker_id: tracker_ids)
+                  .joins(:custom_values)
+                  .where(custom_values: {
+                    custom_field_id: ReportProject::ReportSchema::CUSTOM_FIELDS_LIST
+                  })
+                  .pluck(
+                    :project_id,
+                    :id,
+                    :tracker_id,
+                    :status_id,
+                    :done_ratio,
+                    :estimated_hours,
+                    'custom_values.custom_field_id',
+                    'custom_values.value'
+                  )
 
+      data = {}
 
-    # Récupération des issues déjà regroupées et optimisées
-     data_project = calculate_for_project(project_parent_id)
-  
-    # data_project => { project_id => { tracker_id => [ {issue_hash}, ... ] } }
+      rows.each do |row|
+        project_id, issue_id, tracker_id, status_id,
+        done_ratio, estimated_hours, cf_id, cf_value = row
 
-    # Parcours et transformation pour appliquer la logique métier
-   
-     report_data = data_project.transform_values do |trackers_hash|
-      
-       trackers_hash.transform_values do |issues_array|
-      
-         # Pour chaque tracker, accumuler les données dans un clone de base_struct
-      
-         tracker_struct = base_struct.deep_dup
+        project_hash = (data[project_id] ||= {})
+        tracker_hash = (project_hash[tracker_id] ||= {})
+        issue_hash   = (tracker_hash[issue_id] ||= {
+          project_id: project_id,
+          issue_id: issue_id,
+          tracker_id: tracker_id,
+          status_id: status_id,
+          done_ratio: done_ratio,
+          estimated_hours: estimated_hours
+        })
 
-         issues_array.each do |issue|
-          # Ici on applique la logique métier pour remplir tracker_struct
-          # Par exemple, un pseudo-calcul selon status_id, done_ratio, scenario, etc.
-        
-           ReportProject::Dispatcher::Process.process(issue, tracker_struct)
-         end
+        issue_hash[cf_id.to_i] = cf_value
+      end
 
-      tracker_struct
+      # Normalisation finale : tracker_id => [issues]
+      data.transform_values! do |trackers|
+        trackers.transform_values!(&:values)
+      end
+
+      data
     end
+
+    # =====================================================
+    # Construction finale de la structure métier
+    # =====================================================
+    def self.build_report_data(project_parent_id)
+
+      data_project = calculate_for_project(project_parent_id)
+
+      report_data = data_project.transform_values do |trackers_hash|
+        trackers_hash.transform_values do |issues_array|
+
+          tracker_struct =
+            ReportProject::ReportSchema.build_category_metrics
+
+          issues_array.each do |issue|
+            ReportProject::Dispatcher::Process.process(issue, tracker_struct)
+          end
+
+          tracker_struct
+        end
+      end
+
+      report_data
+    end
+
   end
-
-  report_data
 end
-
-
-end
-end
-
-
