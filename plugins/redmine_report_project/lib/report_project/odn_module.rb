@@ -50,8 +50,8 @@ module ReportProject
                state = rules_config[status][1][:equal_100][:state]
                field = rules_config[status][1][:equal_100][:field_map][TRACKERS_LIST[data[:tracker_id]]]
             end
-
-           puts "Array"
+           i = 0
+           puts "Array #{i+1}"
           end
 
 
