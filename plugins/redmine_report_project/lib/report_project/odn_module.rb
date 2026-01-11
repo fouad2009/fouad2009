@@ -14,23 +14,12 @@ module ReportProject
            # =========================
            # Mapping du statut (peut être nil)
            # =========================
-             status = STATUSES[data[:status]]
+             status = status_key(data)
              return tracker_struct if status.nil?
-             ratio = data[:ratio]
-             exercice = data[:exercice]
-             scenario = data[:scenario].to_i
-
-         case TRACKERS_LIST[data[:tracker_id]]
-          when :odn_prestation
-            category = case scenario
-                 when 291 then :category_1
-                 when 292 then :category_2
-                 when 293 then :category_2
-              end
-          else 
-            category = :category_1
-          end
-
+             ratio    = ratio(data)
+             exercice = exercice(data)
+             scenario = scenario(data)
+             category = resolve_category(data)
         
          return tracker_struct unless rules_config.key?(status)
 

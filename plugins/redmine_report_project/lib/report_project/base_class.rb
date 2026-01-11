@@ -1,6 +1,7 @@
 module ReportProject
   module BaseClass
 
+    
     # =========================
     # Context métier partagé
     # =========================
@@ -33,6 +34,45 @@ module ReportProject
       include ReportProject::ReportSchema
 
       CF = CUSTOM_FIELDS_NAME
+
+
+  # =========================
+  # Helpers de contexte
+  # =========================
+
+  def self.status_key(data)
+    STATUSES[data.status]
+  end
+
+  def self.tracker_key(data)
+    TRACKERS_LIST[data.tracker_id]
+  end
+
+  def self.exercice(data)
+    data.exercice
+  end
+
+  def self.ratio(data)
+    data.ratio
+  end
+
+  def self.scenario(data)
+    data.scenario.to_i
+  end
+
+  def self.resolve_category(data)
+    case tracker_key(data)
+    when :odn_prestation
+      case scenario(data)
+      when 291 then :category_1
+      when 292, 293 then :category_2
+      else :category_1
+      end
+    else
+      :category_1
+    end
+  end
+
 
       # =========================
       # Normalisation des champs

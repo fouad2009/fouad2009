@@ -1,3 +1,50 @@
 = redmine_report_project
 commit normalisation plugin
 Description goes here
+
+
+Module ReportDataInit :
+
+report_data_init.rb file
+
+
+ [project_parent_id] 
+       │
+       ▼
+calculate_for_project
+       │
+       ├─ Vérifie User.current
+       ├─ Récupère projet
+       ├─ Détermine sous-projets
+       ├─ Récupère tracker_ids
+       ├─ Requête optimisée Issues + Custom Fields
+       ▼
+   rows = [
+     [project_id, issue_id, tracker_id, status_id, done_ratio, estimated_hours, cf_id, cf_value],
+     ...
+   ]
+       │
+       ▼
+   Construction structure imbriquée
+       data[project_id][tracker_id][issue_id] = {
+           project_id, issue_id, tracker_id, status_id, done_ratio, estimated_hours,
+           cf_id => cf_value
+       }
+       │
+       ▼
+ Normalisation → data[project_id][tracker_id] = [issue_hash, ...]
+       │
+       ▼
+   build_report_data
+       │
+       ├─ Initialise tracker_struct (métriques)
+       ├─ Pour chaque issue, Dispatcher::Process.process(issue, tracker_struct)
+       ▼
+   Output final :
+   report_data = {
+     project_id => {
+       tracker_id => {
+           métriques calculées
+       }
+     }
+   }

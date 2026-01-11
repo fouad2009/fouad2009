@@ -9,10 +9,11 @@ module ReportProject
         # =========================
         # Mapping du statut (peut être nil)
         # =========================
-        status = STATUSES[data[:status]]
+        status = status_key(data)
+        exercice = exercice(data)
         return tracker_struct if status.nil?
 
-        exercice = data[:exercice]
+      
 
         # =========================
         # Configuration APD

@@ -80,3 +80,56 @@
       state: study_completed
       field: capacite_acces_odn_prevue
 
+  radio_lte:
+
+    INITIALISATION:
+      state: not_started
+      field: count
+
+    ETUDE_RADIO:
+      state: study_in_progress
+      field: count
+
+    ETUDE_RADIO_VALIDEE:
+      state: study_in_progress
+      field: count
+
+    ETUDE_RADIO_NON_VALIDEE:
+      state: study_in_progress
+      field: count
+
+    ETUDE_TSSR:
+      state: study_in_progress
+      field: count
+
+    ETUDE_TSSR_VALIDEE:
+      state: study_completed
+      field: count
+
+    AUTORISATION:
+      state: committed
+      field: count 
+
+    AUTORISATION_ACCORDEE:
+      state: committed
+      field: count
+
+    PREPARATION_SITE:
+      state: site_preparation
+      field: count
+
+    SITE_PRET:
+      state: site_validated
+      field: count
+
+    DEMANDE_DOTATION:
+      state: equipment_request
+      field: count
+      
+    DOTATION_VALIDEE:
+    DOTER:
+    DEMANDE_INSTALLATION:
+    INSTALLATION_ACCORDEE:
+    INSTALLE:
+    MES:
+    PRET_A_L_EXPLOITATION:
