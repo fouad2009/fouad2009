@@ -33,7 +33,7 @@ module ReportProject
              
              state = rules_config[status][:state]
              field = rules_config[status][:field_map][tracker]
-             if tracker == :odn_prestation 
+             if commercialisable?(data)
 
              puts "etat vendabe: #{COMPLETED_STATUSES.include?(status)}--- cattegorie:#{category} status:#{status} etat:#{state} field:#{field} "
              end
