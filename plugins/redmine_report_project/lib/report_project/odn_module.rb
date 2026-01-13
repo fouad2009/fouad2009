@@ -30,7 +30,7 @@ module ReportProject
 
           if commercialisable?(data)
 
-             puts "etat vendabe: #{COMPLETED_STATUSES.include?(status)}--- cattegorie:#{category} status:#{status} --- tracker:#{tracker} --- exercice:#{exercice} --- ratio:#{ratio}"
+             puts "etat vendabe: #{COMPLETED_STATUSES.include?(status)}--- cattegorie > #{category} status > #{status} --- tracker > #{tracker} --- exercice > #{exercice} --- ratio > #{ratio}"
              end
     
          case rules_config[status]
