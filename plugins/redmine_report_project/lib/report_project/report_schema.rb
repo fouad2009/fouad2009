@@ -35,7 +35,6 @@ module ReportProject
     EN_TRAITEMENT,
     PAIEMENT_SOUS_RESERVE,
     PAIEMENT_VALIDE,
-    FINALISEE,
     CLOTURE
   ].freeze 
 

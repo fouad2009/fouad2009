@@ -33,7 +33,7 @@ module ReportProject
              
              state = rules_config[status][:state]
              field = rules_config[status][:field_map][tracker]
-
+             puts "etat vendabe: #{COMPLETED_STATUSES.include?(status)}--- status:#{status} etat:#{state} field:#{field} "
               if COMPLETED_STATUSES.include?(status) && commercialisable?(data)
                 tracker_struct[category][exercice][state_commercialisable][:count] += 1
                 tracker_struct[category][exercice][state_commercialisable][:quantity] += data[field]
