@@ -54,9 +54,7 @@ module ReportProject
                if  commercialisable?(data) && status == :EN_PROGRESSION
                 tracker_struct[category][exercice][state_commercialisable][:count] += 1
                 tracker_struct[category][exercice][state_commercialisable][:quantity] += data[field]
-
               end
-
             end
           
           end
