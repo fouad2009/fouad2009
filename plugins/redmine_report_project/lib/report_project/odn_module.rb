@@ -28,11 +28,7 @@ module ReportProject
 
          return tracker_struct unless action 
 
-          if commercialisable?(data)
-
-             puts "etat vendabe: #{COMPLETED_STATUSES.include?(status)}--- cattegorie > #{category} status > #{status} --- tracker > #{tracker} --- exercice > #{exercice} --- ratio > #{ratio}"
-             end
-    
+        
          case rules_config[status]
           when Hash
              
