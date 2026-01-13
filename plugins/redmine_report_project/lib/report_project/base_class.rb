@@ -60,6 +60,11 @@ module ReportProject
     data.scenario.to_i
   end
 
+  def self.commercialisable?(data)
+    return true if data.tracker_id == 60 &&  data.commercialisable == 354 # Oui
+    false
+  end
+
   def self.resolve_category(data)
     case tracker_key(data)
     when :odn_prestation

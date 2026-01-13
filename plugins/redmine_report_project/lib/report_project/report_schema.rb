@@ -28,6 +28,17 @@ module ReportProject
         position
     ].freeze
 
+  COMPLETED_STATUSES = %i[
+     
+    TRAVAUX_ACHEVES,
+    SERVICE_FAIT,
+    EN_TRAITEMENT,
+    PAIEMENT_SOUS_RESERVE,
+    PAIEMENT_VALIDE,
+    FINALISEE,
+    CLOTURE
+  ].freeze 
+
   TRACKERS_LIST = {
   2  => :pose_cable_urbain,
   3  => :remplacement_cable,
