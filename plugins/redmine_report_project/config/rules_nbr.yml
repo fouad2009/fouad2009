@@ -122,14 +122,22 @@
       state: site_validated
       field: count
 
-    DEMANDE_DOTATION:
-      state: equipment_request
-      field: count
-      
-    DOTATION_VALIDEE:
-    DOTER:
     DEMANDE_INSTALLATION:
+      state: installation_request
+      field: count
+
     INSTALLATION_ACCORDEE:
+      state: request_approved
+      field: count
+
     INSTALLE:
+      state: installed
+      field: count
+
     MES:
+      state: service_activated
+      field: count
+
     PRET_A_L_EXPLOITATION:
+      state: in_operation
+      field: count

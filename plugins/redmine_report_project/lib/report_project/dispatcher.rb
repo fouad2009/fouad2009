@@ -7,8 +7,8 @@ module ReportProject
         58 => ReportProject::ApdModule::Apd,
         60 => ReportProject::OdnModule::Odn,
         4 =>  ReportProject::OdnModule::Odn,
-        6 => ReportProject::PrestationModule::Prestation,
-        7 => ReportProject::OltModule::Olt,
+        6 =>  ReportProject::PrestationModule::Prestation,
+        7 =>  ReportProject::OltModule::Olt,
         10 => ReportProject::LteModule::Lte,
         52 => ReportProject::PrestationModule::Prestation, 
         22 => ReportProject::PrestationModule::Prestation 

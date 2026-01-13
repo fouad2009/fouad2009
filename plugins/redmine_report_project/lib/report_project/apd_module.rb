@@ -13,8 +13,6 @@ module ReportProject
         exercice = exercice(data)
         return tracker_struct if status.nil?
 
-      
-
         # =========================
         # Configuration APD
         # =========================
