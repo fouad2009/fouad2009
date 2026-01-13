@@ -27,16 +27,18 @@ module ReportProject
          return tracker_struct unless rules_config.key?(status)
 
          return tracker_struct unless action 
+
+          if commercialisable?(data)
+
+             puts "etat vendabe: #{COMPLETED_STATUSES.include?(status)}--- cattegorie:#{category} status:#{status} etat:#{state} field:#{field} "
+             end
     
          case rules_config[status]
           when Hash
              
              state = rules_config[status][:state]
              field = rules_config[status][:field_map][tracker]
-             if commercialisable?(data)
-
-             puts "etat vendabe: #{COMPLETED_STATUSES.include?(status)}--- cattegorie:#{category} status:#{status} etat:#{state} field:#{field} "
-             end
+            
               if COMPLETED_STATUSES.include?(status) && commercialisable?(data)
                 tracker_struct[category][exercice][state_commercialisable][:count] += 1
                 tracker_struct[category][exercice][state_commercialisable][:quantity] += data[field]
