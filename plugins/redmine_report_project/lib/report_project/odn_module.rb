@@ -10,9 +10,7 @@ module ReportProject
             rules_config = RULES_QTN_CONFIG[:prestation]
             planned_fields = RULES_QTN_CONFIG[:common_fields][:planned_fields]
             completed_fields = RULES_QTN_CONFIG[:common_fields][:completed_fields]
-            #action_type = TRACKERS_LIST[data[:tracker_id]] == :odn_prestation
-            action =  RULES_QTN_CONFIG[:actions].include?(tracker)
-
+           
            # =========================
            # Mapping du statut (peut être nil)
            # =========================
@@ -24,6 +22,7 @@ module ReportProject
              scenario = scenario(data)
              category = resolve_category(data)
              state_commercialisable =  :sellable  # Infrastructure vendable / commercialisable
+             action =  RULES_QTN_CONFIG[:actions].include?(tracker)
         
          return tracker_struct unless rules_config.key?(status)
 
